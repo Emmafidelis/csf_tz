@@ -60,14 +60,16 @@ COST_CENTER_LINK_FIELDS = {"cost_center"}
 def execute():
 	company = get_target_company()
 	if not company:
-		frappe.throw(
-			"csf_tz setup cannot run because no Company exists on this site. "
-			"Install ERPNext and create a Company via the setup wizard before installing csf_tz."
+		frappe.logger().info(
+			"Skipping csf_tz setup: no Company on the site yet. "
+			"Re-run csf_tz.utils.setup.execute after a Company is created."
 		)
+		return
 
 	abbr = frappe.get_cached_value("Company", company, "abbr")
 	if not abbr:
-		frappe.throw(f"Company {company} has no abbreviation.")
+		frappe.logger().info(f"Skipping csf_tz setup: Company {company} has no abbreviation.")
+		return
 
 	currency = frappe.get_cached_value("Company", company, "default_currency")
 	if currency != "TZS":

@@ -159,9 +159,7 @@ def resolve_cost_center(value: str, company: str, abbr: str) -> str:
 
 	cost_center_name = strip_company_suffix(value, abbr)
 	return (
-		frappe.db.get_value(
-			"Cost Center", {"cost_center_name": cost_center_name, "company": company}, "name"
-		)
+		frappe.db.get_value("Cost Center", {"cost_center_name": cost_center_name, "company": company}, "name")
 		or value
 	)
 

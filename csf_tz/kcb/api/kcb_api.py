@@ -4,8 +4,8 @@
 import os
 
 import frappe
-from frappe import _
 import requests
+from frappe import _
 from frappe.utils.file_manager import get_file
 
 

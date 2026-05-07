@@ -565,8 +565,9 @@ class ReceivablePayableReport(object):
 		if date and for_future:
 			conditions += " and posting_date > '%s'" % date
 
-		self.gl_entries = frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
-			"""
+		self.gl_entries = (
+			frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
+				"""
 			select
 				name, posting_date, account, party_type, party, voucher_type, voucher_no,
 				against_voucher_type, against_voucher, account_currency, remarks, {0}
@@ -576,8 +577,9 @@ class ReceivablePayableReport(object):
 				docstatus < 2 and party_type=%s and (party is not null and party != '') {1}
 				group by voucher_type, voucher_no, against_voucher_type, against_voucher, party
 				order by posting_date, party""".format(select_fields, conditions),
-			values,
-			as_dict=True,
+				values,
+				as_dict=True,
+			)
 		)
 
 		return self.gl_entries

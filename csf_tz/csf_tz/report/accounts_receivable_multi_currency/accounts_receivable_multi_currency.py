@@ -414,8 +414,9 @@ class ReceivablePayableReport(object):
 
 	def get_payment_terms(self, row):
 		# build payment_terms for row
-		payment_terms_details = frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
-			"""
+		payment_terms_details = (
+			frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
+				"""
 			select
 				si.name, si.party_account_currency, si.currency, si.conversion_rate,
 				ps.due_date, ps.payment_amount, ps.description, ps.paid_amount
@@ -425,8 +426,9 @@ class ReceivablePayableReport(object):
 				si.name = %s
 			order by ps.paid_amount desc, due_date
 		""".format(row.voucher_type),
-			row.voucher_no,
-			as_dict=1,
+				row.voucher_no,
+				as_dict=1,
+			)
 		)
 
 		original_row = frappe._dict(row)
@@ -659,8 +661,9 @@ class ReceivablePayableReport(object):
 		else:
 			select_fields = "debit, credit"
 
-		self.gl_entries = frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
-			"""
+		self.gl_entries = (
+			frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
+				"""
 			select
 				name, posting_date, account, party_type, party, voucher_type, voucher_no, debit_in_account_currency, credit_in_account_currency,
 				against_voucher_type, against_voucher, account_currency, remarks, {0}
@@ -672,8 +675,9 @@ class ReceivablePayableReport(object):
 				and party_type=%s
 				and (party is not null and party != '')
 				{1} {2} {3}""".format(select_fields, date_condition, conditions, order_by),
-			values,
-			as_dict=True,
+				values,
+				as_dict=True,
+			)
 		)
 
 	def get_sales_invoices_or_customers_based_on_sales_person(self):

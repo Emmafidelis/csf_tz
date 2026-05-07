@@ -373,8 +373,9 @@ class MultiBankBalance:
 		account_names = [acc["name"] for acc in accounts]
 
 		# Get all GL entries for these accounts in the date range
-		gl_entries = frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
-			"""
+		gl_entries = (
+			frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
+				"""
             SELECT
                 account,
                 posting_date,
@@ -386,8 +387,9 @@ class MultiBankBalance:
             GROUP BY account, posting_date
             ORDER BY posting_date, account
         """.format(",".join(["%s"] * len(account_names))),
-			account_names + [from_date, to_date],
-			as_dict=True,
+				account_names + [from_date, to_date],
+				as_dict=True,
+			)
 		)
 
 		# Build running balances

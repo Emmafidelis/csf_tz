@@ -1253,9 +1253,7 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
 
 		jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
 		frappe.msgprint(
-			_("Journal Entry Created for Withholding Tax <a href='{0}'>{1}</a>").format(
-				jv_url, jv_doc.name
-			)
+			_("Journal Entry Created for Withholding Tax <a href='{0}'>{1}</a>").format(jv_url, jv_doc.name)
 		)
 
 
@@ -1467,9 +1465,7 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
 
 		jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
 		frappe.msgprint(
-			_("Journal Entry Created for Withholding Tax <a href='{0}'>{1}</a>").format(
-				jv_url, jv_doc.name
-			)
+			_("Journal Entry Created for Withholding Tax <a href='{0}'>{1}</a>").format(jv_url, jv_doc.name)
 		)
 
 

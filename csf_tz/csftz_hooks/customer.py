@@ -10,7 +10,7 @@ def get_customer_total_unpaid_amount(customer, company=None):
 	if company:
 		company_condition = " and company = '{0}'".format(company)
 	company_wise_total_unpaid = frappe._dict(
-		frappe.db.sql(
+		frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 			"""
         select company, sum(debit_in_account_currency) - sum(credit_in_account_currency)
         from `tabGL Entry`

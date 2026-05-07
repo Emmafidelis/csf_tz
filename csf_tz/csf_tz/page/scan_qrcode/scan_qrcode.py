@@ -1,4 +1,5 @@
 import frappe
+from frappe import _
 
 
 @frappe.whitelist()
@@ -9,7 +10,7 @@ def add_biometric_log(data):
 	log.uid = data
 	log.timestamp = frappe.utils.now_datetime()
 	log.insert(ignore_permissions=True)
-	frappe.msgprint("Biometric log added successfully", alert=True)
+	frappe.msgprint(_("Biometric log added successfully"), alert=True)
 
 	return log
 

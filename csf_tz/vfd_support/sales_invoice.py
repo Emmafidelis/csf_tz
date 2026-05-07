@@ -29,11 +29,11 @@ def vfd_validation(doc, method):
 
 	for item in doc.items:
 		if not item.item_code:
-			frappe.throw(_("Item Code not set for item {0}".format(item.item_name)))
+			frappe.throw(_("Item Code not set for item {0}").format(item.item_name))
 		if not item.item_tax_template:
 			item_tax_template = frappe.get_value("Item", item.item_code, "default_tax_template")
 			if not item_tax_template:
-				frappe.throw(_("Item Taxes Template not set for item {0}".format(item.item_code)))
+				frappe.throw(_("Item Taxes Template not set for item {0}").format(item.item_code))
 			else:
 				item.item_tax_template = item_tax_template
 		item_taxcode = get_item_taxcode(item.item_tax_template, item.item_code, doc.name)
@@ -48,16 +48,16 @@ def vfd_validation(doc, method):
 				other_tax += tax_value.get("tax_amount")
 
 		if other_tax:
-			frappe.throw(_("Taxes not set correctly for Other Tax item {0}".format(item.item_code)))
+			frappe.throw(_("Taxes not set correctly for Other Tax item {0}").format(item.item_code))
 		if item_taxcode == 1 and with_tax != 1:
 			if vfdplus_settings and vfdplus_settings.vat_enabled:
 				frappe.msgprint(
-					_("Taxes is not set to 18pct for Standard Rate item {0}".format(item.item_code))
+					_("Taxes is not set to 18pct for Standard Rate item {0}").format(item.item_code)
 				)
 			else:
-				frappe.throw(_("Taxes not set correctly for Standard Rate item {0}".format(item.item_code)))
+				frappe.throw(_("Taxes not set correctly for Standard Rate item {0}").format(item.item_code))
 		elif item_taxcode != 1 and with_tax != 0:
-			frappe.throw(_("Taxes not set correctly for Non Standard Rate item {0}".format(item.item_code)))
+			frappe.throw(_("Taxes not set correctly for Non Standard Rate item {0}").format(item.item_code))
 
 	if not doc.vfd_cust_id_type or not doc.vfd_cust_id:
 		data = get_customer_id_info(doc.customer)
@@ -89,10 +89,10 @@ def get_item_taxcode(item_tax_template=None, item_code=None, invoice_name=None):
 	if not item_tax_template:
 		if item_code and invoice_name:
 			frappe.throw(
-				_("Item Taxes Template not set for item {0} in invoice {1}".format(item_code, invoice_name))
+				_("Item Taxes Template not set for item {0} in invoice {1}").format(item_code, invoice_name)
 			)
 		elif item_code:
-			frappe.throw(_("Item Taxes Template not set for item {0}".format(item_code)))
+			frappe.throw(_("Item Taxes Template not set for item {0}").format(item_code))
 		else:
 			frappe.throw(_("Item Taxes Template not set"))
 
@@ -102,7 +102,7 @@ def get_item_taxcode(item_tax_template=None, item_code=None, invoice_name=None):
 		if vfd_taxcode:
 			taxcode = int(vfd_taxcode[:1])
 		else:
-			frappe.throw(_("VFD Tax Code not setup in {0}".format(item_tax_template)))
+			frappe.throw(_("VFD Tax Code not setup in {0}").format(item_tax_template))
 	return taxcode
 
 

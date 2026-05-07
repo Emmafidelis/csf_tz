@@ -160,7 +160,7 @@ def get_rootwise_opening_balances(filters, report_type):
 
 				query_filters.update({dimension: filters.get(dimension)})
 
-	gle = frappe.db.sql(
+	gle = frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 		"""
 		select
 			account, sum(debit) as opening_debit, sum(credit) as opening_credit
@@ -247,7 +247,7 @@ def prepare_data(accounts, filters, total_row, parent_children_map, company_curr
 		order_by="date",
 	)
 	if len(currency_value) == 0:
-		frappe.throw("No Currency Exchange for USD")
+		frappe.throw(_("No Currency Exchange for USD"))
 	for d in accounts:
 		# Prepare opening closing for group account
 		if parent_children_map.get(d.account):

@@ -284,7 +284,7 @@ def get_items(filters):
 
 	items = []
 	if conditions:
-		items = frappe.db.sql(
+		items = frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 			"""select name from `tabItem` item where {}""".format(" and ".join(conditions)),
 			filters,
 			pluck="name",

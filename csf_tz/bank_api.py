@@ -34,7 +34,7 @@ def set_callback_token(doc, method):
 	doc.callback_token = binascii.hexlify(os.urandom(14)).decode()
 	series = frappe.get_value("Company", doc.company, "nmb_series") or ""
 	if not series:
-		frappe.throw(_("Please set NMB User Series in Company {0}".format(doc.company)))
+		frappe.throw(_("Please set NMB User Series in Company {0}").format(doc.company))
 	reference = str(series) + "F" + str(doc.name)
 	if not doc.abbr:
 		doc.abbr = frappe.get_value("Company", doc.company, "abbr") or ""
@@ -54,14 +54,14 @@ def set_callback_token(doc, method):
 def get_nmb_token(company):
 	url = frappe.get_value("Company", company, "nmb_url")
 	if not url:
-		frappe.throw(_("Please set NMB URL in Company {0}".format(company)))
+		frappe.throw(_("Please set NMB URL in Company {0}").format(company))
 	url = url + str("auth")
 	username = frappe.get_value("Company", company, "nmb_username")
 	if not username:
-		frappe.throw(_("Please set NMB User Name in Company {0}".format(company)))
+		frappe.throw(_("Please set NMB User Name in Company {0}").format(company))
 	password = get_decrypted_password("Company", company, "nmb_password")
 	if not password:
-		frappe.throw(_("Please set NMB Password in Company {0}".format(company)))
+		frappe.throw(_("Please set NMB Password in Company {0}").format(company))
 	data = {
 		"username": username,
 		"password": password,
@@ -95,7 +95,7 @@ def get_nmb_token(company):
 def send_nmb(method, data, company):
 	url = frappe.get_value("Company", company, "nmb_url")
 	if not url:
-		frappe.throw(_("Please set NMB URL in Company {0}".format(company)))
+		frappe.throw(_("Please set NMB URL in Company {0}").format(company))
 	data["token"] = get_nmb_token(company)
 	url = url + str(method)
 	for i in range(3):
@@ -112,13 +112,13 @@ def send_nmb(method, data, company):
 					response_data=json.loads(r.text),
 				)
 			if json.loads(r.text)["status"] == 1:
-				frappe.msgprint("Response from bank:<br><hr>" + json.loads(r.text)["description"])
+				frappe.msgprint(_("Response from bank:<br><hr>") + json.loads(r.text)["description"])
 				return json.loads(r.text)
 			else:
 				print(json.loads(r.text)["description"])
 				if json.loads(r.text)["description"] == "Duplicate Invoice Number":
 					return json.loads(r.text)
-				frappe.msgprint("Error detected at bank:<br><hr>" + json.loads(r.text)["description"])
+				frappe.msgprint(_("Error detected at bank:<br><hr>") + json.loads(r.text)["description"])
 				frappe.throw(json.loads(r.text))
 		except Exception as e:
 			frappe.logger().debug({"send_nmb webhook_error": e, "try": i + 1})
@@ -154,7 +154,7 @@ def invoice_submission(doc=None, method=None, fees_name=None):
 	series = frappe.get_value("Company", doc.company, "nmb_series") or ""
 	frappe.get_value("Company", doc.company, "abbr") or ""
 	if not series:
-		frappe.throw(_("Please set NMB User Series in Company {0}".format(doc.company)))
+		frappe.throw(_("Please set NMB User Series in Company {0}").format(doc.company))
 	data = {
 		"reference": doc.bank_reference,
 		"student_name": doc.student_name,
@@ -187,7 +187,7 @@ def receive_callback(*args, **kwargs):
 			if getattr(msgs, atr):
 				message[atr] = getattr(msgs, atr)
 	else:
-		frappe.throw("This has no body!")
+		frappe.throw(_("This has no body!"))
 	parsed_url = urlparse(url)
 	message["fees_token"] = parsed_url[4][6:]
 	message["doctype"] = "NMB Callback"
@@ -320,7 +320,7 @@ def receive_validate_reference(*args, **kwargs):
 			if getattr(msgs, atr):
 				message[atr] = getattr(msgs, atr)
 	else:
-		frappe.throw("This has no body!")
+		frappe.throw(_("This has no body!"))
 
 	doc_info = get_fee_info(message["reference"])
 	if doc_info["name"]:
@@ -437,9 +437,9 @@ def get_fees_default_accounts(company):
 	if not data["income"]:
 		data["bank"] = frappe.get_value("Company", company, "default_income_account") or ""
 	if not data["bank"]:
-		frappe.throw(_("Please set Fee Bank Account in Company {0}".format(company)))
+		frappe.throw(_("Please set Fee Bank Account in Company {0}").format(company))
 	if not data["income"]:
-		frappe.throw(_("Please set Student Applicant Fees Revenue Account in Company {0}".format(company)))
+		frappe.throw(_("Please set Student Applicant Fees Revenue Account in Company {0}").format(company))
 	return data
 
 

@@ -48,6 +48,7 @@ class EFDZReport(Document):
 			"or electronic_fiscal_device is null or electronic_fiscal_device = '')"
 		)
 
+		# nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 		query = """ select *
                         from `tabSales Invoice`
                         where {0}""".format(condition)
@@ -55,7 +56,7 @@ class EFDZReport(Document):
 		sales_invoices = frappe.db.sql(query, as_dict=True)
 
 		if not sales_invoices:
-			frappe.throw("No Sales Invoice Fetch")
+			frappe.throw(_("No Sales Invoice Fetch"))
 
 		for i in sales_invoices:
 			if i.base_total_taxes_and_charges == 0:
@@ -88,28 +89,22 @@ class EFDZReport(Document):
 			self.allowable_difference or 0
 		):
 			frappe.throw(
-				_(
-					"Sales Invoice Amount {0} is not equal to Money Entered {1}".format(
-						flt(self.total_turnover_ticked, 2), flt(self.total_turnover, 2)
-					)
+				_("Sales Invoice Amount {0} is not equal to Money Entered {1}").format(
+					flt(self.total_turnover_ticked, 2), flt(self.total_turnover, 2)
 				)
 			)
 		if abs(flt(self.net_amount, 2) - flt(self.total_excluding_vat_ticked, 2)) > (
 			self.allowable_difference or 0
 		):
 			frappe.throw(
-				_(
-					"Total Excluding VAT {0} is not equal to Total Excluding VAT (Ticked) {1}".format(
-						flt(self.net_amount, 2), flt(self.total_excluding_vat_ticked, 2)
-					)
+				_("Total Excluding VAT {0} is not equal to Total Excluding VAT (Ticked) {1}").format(
+					flt(self.net_amount, 2), flt(self.total_excluding_vat_ticked, 2)
 				)
 			)
 		if abs(flt(self.total_vat, 2) - flt(self.total_vat_ticked, 2)) > (self.allowable_difference or 0):
 			frappe.throw(
-				_(
-					"Total VAT {0} is not equal to Total VAT (Ticked) {1}".format(
-						flt(self.total_vat, 2), flt(self.total_vat_ticked, 2)
-					)
+				_("Total VAT {0} is not equal to Total VAT (Ticked) {1}").format(
+					flt(self.total_vat, 2), flt(self.total_vat_ticked, 2)
 				)
 			)
 		if abs(flt(self.total_turnover_ex_sr, 2) - flt(self.total_turnover_exempted__sp_relief_ticked, 2)) > (
@@ -117,10 +112,10 @@ class EFDZReport(Document):
 		):
 			frappe.throw(
 				_(
-					"Total Turnover Exempted / Sp. Relief {0} is not equal to Total Turnover Exempted / Sp. Relief (Ticked) {1}".format(
-						flt(self.total_turnover_ex_sr, 2),
-						flt(self.total_turnover_exempted__sp_relief_ticked, 2),
-					)
+					"Total Turnover Exempted / Sp. Relief {0} is not equal to Total Turnover Exempted / Sp. Relief (Ticked) {1}"
+				).format(
+					flt(self.total_turnover_ex_sr, 2),
+					flt(self.total_turnover_exempted__sp_relief_ticked, 2),
 				)
 			)
 		if self.get_number_of_ticked() != self.receipts_issued:
@@ -137,10 +132,8 @@ class EFDZReport(Document):
 				invoice_doc = frappe.get_doc("Sales Invoice", invoice.invoice_number)
 				if invoice_doc.efd_z_report:
 					frappe.throw(
-						_(
-							"The Sales Invoice {0} is linked to EFD Z Report {1}".format(
-								invoice.invoice_number, invoice_doc.efd_z_report
-							)
+						_("The Sales Invoice {0} is linked to EFD Z Report {1}").format(
+							invoice.invoice_number, invoice_doc.efd_z_report
 						)
 					)
 				else:

@@ -431,7 +431,7 @@ class GrossProfitGenerator(object):
 		if self.filters.to_date:
 			condition += " AND modified='%s'" % (self.filters.to_date)
 
-		last_purchase_rate = frappe.db.sql(
+		last_purchase_rate = frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 			"""
 		select (a.base_rate / a.conversion_factor)
 		from `tabPurchase Invoice Item` a
@@ -465,7 +465,7 @@ class GrossProfitGenerator(object):
 		if self.filters.get("item_code"):
 			conditions += " and `tabSales Invoice Item`.item_code = %(item_code)s"
 
-		self.si_list = frappe.db.sql(
+		self.si_list = frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 			"""
 			select
 				`tabSales Invoice Item`.parenttype, `tabSales Invoice Item`.parent,

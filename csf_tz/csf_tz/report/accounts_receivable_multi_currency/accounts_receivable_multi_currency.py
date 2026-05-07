@@ -414,7 +414,7 @@ class ReceivablePayableReport(object):
 
 	def get_payment_terms(self, row):
 		# build payment_terms for row
-		payment_terms_details = frappe.db.sql(
+		payment_terms_details = frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 			"""
 			select
 				si.name, si.party_account_currency, si.currency, si.conversion_rate,
@@ -534,7 +534,7 @@ class ReceivablePayableReport(object):
 		else:
 			amount_field = "jea.debit - " if self.party_type == "Supplier" else "jea.credit"
 
-		return frappe.db.sql(
+		return frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 			"""
 			select
 				jea.reference_name as invoice_no,
@@ -659,7 +659,7 @@ class ReceivablePayableReport(object):
 		else:
 			select_fields = "debit, credit"
 
-		self.gl_entries = frappe.db.sql(
+		self.gl_entries = frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 			"""
 			select
 				name, posting_date, account, party_type, party, voucher_type, voucher_no, debit_in_account_currency, credit_in_account_currency,

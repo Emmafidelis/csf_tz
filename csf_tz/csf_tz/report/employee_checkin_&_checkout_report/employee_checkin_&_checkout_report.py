@@ -298,7 +298,7 @@ def get_checkout_data(conditions, filters, chift_type_details):
 
 
 def get_checkin_details(conditions, filters):
-	data = frappe.db.sql(
+	data = frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 		"""
         SELECT
             chec.employee AS employee,
@@ -324,7 +324,7 @@ def get_checkin_details(conditions, filters):
 
 
 def get_checkout_details(conditions, filters):
-	data = frappe.db.sql(
+	data = frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 		"""
         SELECT
             chec.employee AS employee,

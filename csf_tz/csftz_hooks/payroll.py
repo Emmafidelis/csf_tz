@@ -80,7 +80,7 @@ def update_slips(payroll_entry):
 		payroll_entry=payroll_entry,
 	)
 
-	frappe.msgprint(_("{0} Salary Slips is updated".format(count)))
+	frappe.msgprint(_("{0} Salary Slips is updated").format(count))
 	return count
 
 

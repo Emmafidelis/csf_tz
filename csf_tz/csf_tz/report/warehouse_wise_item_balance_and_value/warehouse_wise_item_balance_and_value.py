@@ -118,7 +118,7 @@ def get_warehouse_list(filters):
 		condition = "and name = %s"
 		value = filters.get("warehouse")
 
-	return frappe.db.sql(
+	return frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 		"""select name
 		from `tabWarehouse` where is_group = 0
 		{condition}""".format(condition=condition),

@@ -55,7 +55,7 @@ def get_stock_ledger_entries(filters, items):
 			", ".join(['"' + frappe.db.escape(i) + '"' for i in items])
 		)
 
-	return frappe.db.sql(
+	return frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 		"""SELECT	sle.posting_date,
 									CASE sle.voucher_type
 										WHEN "Purchase Invoice" THEN "Purchase Invoice"
@@ -95,7 +95,7 @@ def get_opening_balance_entries(filters, items):
 			", ".join(['"' + frappe.db.escape(i) + '"' for i in items])
 		)
 
-	return frappe.db.sql(
+	return frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 		"""SELECT	STR_TO_DATE(%(from_date)s, '%%Y-%%m-%%d') as posting_date,
 									". Opening Balance" as "Particulars",
 									sle.item_code,

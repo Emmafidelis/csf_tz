@@ -114,7 +114,7 @@ def get_fine(number_plate=None, reference=None):
 		result = response.json()
 	except Exception as e:
 		frappe.log_error("Invalid JSON", str(e))
-		frappe.throw("Invalid response format from traffic system")
+		frappe.throw(_("Invalid response format from traffic system"))
 
 	data = result.get("pending_transactions", [])
 

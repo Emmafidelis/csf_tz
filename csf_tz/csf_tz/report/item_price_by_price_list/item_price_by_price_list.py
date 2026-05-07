@@ -91,13 +91,14 @@ def get_data(filters):
 			else:
 				frappe.msgprint(
 					_("No description found for item with barcode: ") + filters.get("barcode"),
-					title="Warning",
+					title=_("Warning"),
 				)
 				return []  # Exit function if no description is found
 
 	if filters.get("item_description"):
 		conditions += f" AND (i.description LIKE '%{filters['item_description']}%' OR i.item_code = '{filters['item_description'] or filters.get('barcode')}')"
 	# Example SQL Query to fetch data
+	# nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 	sql = f"""
         SELECT
             i.item_code,

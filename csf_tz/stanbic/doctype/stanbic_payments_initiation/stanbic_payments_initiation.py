@@ -4,6 +4,7 @@
 import json
 
 import frappe
+from frappe import _
 from frappe.model.document import Document
 
 from csf_tz.stanbic.doctype.stanbic_payments_initiation.xml import get_xml
@@ -69,8 +70,8 @@ class StanbicPaymentsInitiation(Document):
 		for slip in slips:
 			if slip.docstatus == 0:
 				frappe.throw(
-					"Salary Slip {0} is not submitted".format(slip.name),
-					title="Salary Slip Not Submitted",
+					_("Salary Slip {0} is not submitted").format(slip.name),
+					title=_("Salary Slip Not Submitted"),
 				)
 		return slips
 

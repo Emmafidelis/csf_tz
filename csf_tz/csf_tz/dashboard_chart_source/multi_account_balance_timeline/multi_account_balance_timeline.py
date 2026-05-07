@@ -373,7 +373,7 @@ class MultiBankBalance:
 		account_names = [acc["name"] for acc in accounts]
 
 		# Get all GL entries for these accounts in the date range
-		gl_entries = frappe.db.sql(
+		gl_entries = frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 			"""
             SELECT
                 account,

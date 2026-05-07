@@ -23,22 +23,22 @@ def create_additional_salary_journal(doc, method):
 		if not component_account:
 			frappe.throw(
 				_(
-					f"Salary Component Account not found for {doc.salary_component} in {doc.company}. Please set it in Salary Component."
-				)
+					"Salary Component Account not found for {0} in {1}. Please set it in Salary Component."
+				).format(doc.salary_component, doc.company)
 			)
 
 		if method == "on_submit":
 			dr_account = component_account
 			cr_account = cash_account
 		else:
-			frappe.msgprint("Unknown method on create_additional_salary_journal")
+			frappe.msgprint(_("Unknown method on create_additional_salary_journal"))
 			return
 
 		precision = frappe.get_precision("Journal Entry Account", "debit_in_account_currency")
 		journal_entry = frappe.new_doc("Journal Entry")
 		journal_entry.voucher_type = "Cash Entry"
-		journal_entry.user_remark = _(
-			f"{doc.doctype} - {doc.name} by {doc.employee_name} for {doc.salary_component}"
+		journal_entry.user_remark = _("{0} - {1} by {2} for {3}").format(
+			doc.doctype, doc.name, doc.employee_name, doc.salary_component
 		)
 		journal_entry.company = doc.company
 		journal_entry.posting_date = doc.payroll_date
@@ -111,7 +111,9 @@ def generate_additional_salary_records():
 				frequency_factor = auto_repeat_frequency.get(entry.auto_repeat_frequency, "Invalid frequency")
 				if frequency_factor == "Invalid frequency":
 					frappe.throw(
-						f"Invalid frequency: {entry.auto_repeat_frequency} for {entry.name} not found. Contact the developers!"
+						_("Invalid frequency: {0} for {1} not found. Contact the developers!").format(
+							entry.auto_repeat_frequency, entry.name
+						)
 					)
 				next_date = add_months(
 					getdate(entry.last_transaction_date),
@@ -140,10 +142,9 @@ def generate_additional_salary_records():
 					next_date,
 				)
 				frappe.msgprint(
-					"New additional salary created for "
-					+ entry.auto_repeat_frequency
-					+ " dated "
-					+ str(next_date)
+					_("New additional salary created for {0} dated {1}").format(
+						entry.auto_repeat_frequency, str(next_date)
+					)
 				)
 
 

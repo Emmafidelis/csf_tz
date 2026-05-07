@@ -25,21 +25,17 @@ def execute(filters):
 
 	if len(prev_salary_slips) == 0:
 		msgprint(
-			_(
-				"No salary slip found for the previous month: {0} {1}".format(
-					frappe.bold(calendar.month_name[prev_month]), frappe.bold(prev_year)
-				)
+			_("No salary slip found for the previous month: {0} {1}").format(
+				frappe.bold(calendar.month_name[prev_month]), frappe.bold(prev_year)
 			)
 		)
 		return columns, cur_salary_slips
 
 	if len(cur_salary_slips) == 0:
 		msgprint(
-			_(
-				"No salary slip found for the this month: {0} {1}".format(
-					frappe.bold(calendar.month_name[getdate(filters.from_date).month]),
-					frappe.bold(getdate(filters.from_date).year),
-				)
+			_("No salary slip found for the this month: {0} {1}").format(
+				frappe.bold(calendar.month_name[getdate(filters.from_date).month]),
+				frappe.bold(getdate(filters.from_date).year),
 			)
 		)
 		return columns, prev_salary_slips
@@ -68,14 +64,14 @@ def get_columns(prev_month_name, cur_month_name, prev_year, cur_year):
 		},
 		{
 			"fieldname": "prev_gross_pay",
-			"label": _("Gross Pay {0}-{1}".format(prev_month_name, prev_year)),
+			"label": _("Gross Pay {0}-{1}").format(prev_month_name, prev_year),
 			"fieldtype": "Float",
 			"width": 250,
 			"precision": 2,
 		},
 		{
 			"fieldname": "cur_gross_pay",
-			"label": _("Gross Pay {0}-{1}".format(cur_month_name, cur_year)),
+			"label": _("Gross Pay {0}-{1}").format(cur_month_name, cur_year),
 			"fieldtype": "Float",
 			"width": 250,
 			"precision": 2,

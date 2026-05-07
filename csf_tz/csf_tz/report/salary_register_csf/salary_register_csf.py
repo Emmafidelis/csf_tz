@@ -30,7 +30,7 @@ def execute(filters=None):
 
 	salary_slips = get_salary_slips(filters)
 	if not salary_slips:
-		frappe.msgprint("<b>No record found for the filters above</b>")
+		frappe.msgprint(_("<b>No record found for the filters above</b>"))
 		return [], []
 
 	return get_data(filters, salary_slips, currency, company_currency)

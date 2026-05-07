@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 
 import frappe
+from frappe import _
 from frappe.installer import update_site_config
 from frappe.model.document import Document
 
@@ -22,7 +23,7 @@ class CSFTZSettings(Document):
 		if self.enable_fixed_working_days_per_month and (
 			self.working_days_per_month < 1 or self.working_days_per_month > 30
 		):
-			frappe.throw("Working days per month must be between 1 and 30")
+			frappe.throw(_("Working days per month must be between 1 and 30"))
 
 		if self.override_email_queue_batch_size and self.has_value_changed("email_qatch_batch_size"):
 			update_site_config("email_queue_batch_size", self.email_qatch_batch_size)
@@ -42,7 +43,7 @@ class CSFTZSettings(Document):
 				add_trade_in_item()  # Create Trade In item
 				add_trade_in_control_account()  # Create Control Account
 				set_negative_rates_for_items()  # Create Control Account
-				frappe.msgprint("Trade In feature has been successfully enabled.")
+				frappe.msgprint(_("Trade In feature has been successfully enabled."))
 			except Exception as e:
 				# Log the error and notify the user
 				frappe.log_error(f"Error enabling Trade In feature: {str(e)}")
@@ -51,7 +52,7 @@ class CSFTZSettings(Document):
 			# If the feature is being disabled, delete the associated item and account
 			try:
 				delete_trade_in_item_and_account()  # Delete Trade In item and Control Account
-				frappe.msgprint("Trade In feature has been successfully disabled.")
+				frappe.msgprint(_("Trade In feature has been successfully disabled."))
 			except Exception as e:
 				# Log the error and notify the user
 				frappe.log_error(f"Error disabling Trade In feature: {str(e)}")
@@ -61,7 +62,7 @@ class CSFTZSettings(Document):
 		"""Handle TZ Regions data population when checkbox is ticked"""
 		if self.populate_tz_regions and self.has_value_changed("populate_tz_regions"):
 			try:
-				frappe.msgprint("Starting TZ Regions data population. This may take several minutes...")
+				frappe.msgprint(_("Starting TZ Regions data population. This may take several minutes..."))
 
 				# Run the population in the background
 				frappe.enqueue(

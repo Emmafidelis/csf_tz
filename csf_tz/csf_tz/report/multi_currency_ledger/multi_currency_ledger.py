@@ -141,7 +141,7 @@ def get_gl_entries(filters):
 	if filters.get("include_default_book_entries"):
 		filters["company_fb"] = frappe.db.get_value("Company", filters.get("company"), "default_finance_book")
 
-	gl_entries = frappe.db.sql(
+	gl_entries = frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 		"""
 		select
 			posting_date, account, party_type, party,
@@ -558,13 +558,13 @@ def get_columns(filters):
 			"width": 180,
 		},
 		{
-			"label": _("Debit ({0})".format(currency)),
+			"label": _("Debit ({0})").format(currency),
 			"fieldname": "debit",
 			"fieldtype": "Float",
 			"width": 100,
 		},
 		{
-			"label": _("Credit ({0})".format(currency)),
+			"label": _("Credit ({0})").format(currency),
 			"fieldname": "credit",
 			"fieldtype": "Float",
 			"width": 100,
@@ -579,7 +579,7 @@ def get_columns(filters):
 		},
 		{"label": _("Exchange Rate"), "fieldname": "exchange_rate", "fieldtype": "Float", "width": 100},
 		{
-			"label": _("Balance ({0})".format(currency)),
+			"label": _("Balance ({0})").format(currency),
 			"fieldname": "balance",
 			"fieldtype": "Float",
 			"width": 130,

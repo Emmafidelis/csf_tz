@@ -1,4 +1,5 @@
 import frappe
+from frappe import _
 
 
 def add_trade_in_module():
@@ -69,7 +70,7 @@ def add_trade_in_control_account():
 	default_company = global_defaults.default_company
 
 	if not default_company:
-		frappe.throw("Default company is not set in Global Defaults.")
+		frappe.throw(_("Default company is not set in Global Defaults."))
 
 	# Fetch the abbreviation (abbr) for the default company
 	company_details = frappe.get_doc("Company", default_company)
@@ -129,7 +130,7 @@ def delete_trade_in_item_and_account():
 	default_company = global_defaults.default_company
 
 	if not default_company:
-		frappe.throw("Default company is not set in Global Defaults.")
+		frappe.throw(_("Default company is not set in Global Defaults."))
 
 	# Fetch the abbreviation for the default company
 	company_details = frappe.get_doc("Company", default_company)

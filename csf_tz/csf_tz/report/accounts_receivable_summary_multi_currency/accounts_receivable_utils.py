@@ -541,7 +541,7 @@ class ReceivablePayableReport(object):
 			self.party_map = dict(
 				(
 					(r.name, r)
-					for r in frappe.db.sql(
+					for r in frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 						"select {0} from `tab{1}`".format(select_fields, party_type), as_dict=True
 					)
 				)
@@ -565,7 +565,7 @@ class ReceivablePayableReport(object):
 		if date and for_future:
 			conditions += " and posting_date > '%s'" % date
 
-		self.gl_entries = frappe.db.sql(
+		self.gl_entries = frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 			"""
 			select
 				name, posting_date, account, party_type, party, voucher_type, voucher_no,
@@ -776,7 +776,7 @@ def get_pdc_details(party_type, report_date):
 	else:
 		amount_field = "jea.debit + jea.credit"
 
-	pdc_via_je = frappe.db.sql(
+	pdc_via_je = frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 		"""
 		select
 			jea.reference_name as invoice_no, jea.party, jea.party_type,

@@ -20,10 +20,8 @@ def execute(filters=None):
 	prev_salary_slips = get_prev_salary_slips(filters, company_currency, prev_first_date, prev_last_date)
 	if len(prev_salary_slips) == 0:
 		msgprint(
-			_(
-				"No salary slip found for the previous month: {0} {1}".format(
-					frappe.bold(calendar.month_name[prev_month]), frappe.bold(prev_year)
-				)
+			_("No salary slip found for the previous month: {0} {1}").format(
+				frappe.bold(calendar.month_name[prev_month]), frappe.bold(prev_year)
 			)
 		)
 		return []
@@ -71,14 +69,14 @@ def get_columns(filters, prev_month, prev_year):
 		},
 		{
 			"fieldname": "total_prev_month",
-			"label": _("{0} {1}".format(prev_month_name, prev_year)),
+			"label": _("{0} {1}").format(prev_month_name, prev_year),
 			"fieldtype": "Float",
 			"width": 150,
 			"precision": 2,
 		},
 		{
 			"fieldname": "total_cur_month",
-			"label": _("{0} {1}".format(cur_month_name, cur_year)),
+			"label": _("{0} {1}").format(cur_month_name, cur_year),
 			"fieldtype": "Float",
 			"width": 150,
 			"precision": 2,
@@ -101,11 +99,9 @@ def get_data(filters, company_currency, prev_salary_slips):
 	cur_salary_slips = get_cur_salary_slips(filters, company_currency)
 	if len(cur_salary_slips) == 0:
 		msgprint(
-			_(
-				"No salary slip found for the this month: {0} {1}".format(
-					frappe.bold(calendar.month_name[getdate(filters.from_date).month]),
-					frappe.bold(getdate(filters.from_date).year),
-				)
+			_("No salary slip found for the this month: {0} {1}").format(
+				frappe.bold(calendar.month_name[getdate(filters.from_date).month]),
+				frappe.bold(getdate(filters.from_date).year),
 			)
 		)
 		return []

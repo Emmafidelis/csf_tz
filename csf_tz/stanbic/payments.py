@@ -11,24 +11,24 @@ def make_payments_initiation(payroll_entry_name, currency, stanbic_setting_name=
 		if cheque_number:
 			frappe.throw(
 				_(
-					f"Payments initiation {cheque_number} already created for payroll entry {payroll_entry_name}. Please remove the cheque number and try again if you really want to create the payments initiation file."
-				),
-				title="Payments initiation already created",
+					"Payments initiation {0} already created for payroll entry {1}. Please remove the cheque number and try again if you really want to create the payments initiation file."
+				).format(cheque_number, payroll_entry_name),
+				title=_("Payments initiation already created"),
 			)
 		stanbic_setting_doc = frappe.get_doc("Stanbic Setting", {"company": company, "currency": currency})
 		stanbic_setting_name = stanbic_setting_doc.name
 
 	if not stanbic_setting_name:
 		frappe.throw(
-			"Stanbic Setting not found for currency {0}".format(currency),
-			title="Stanbic Setting not found",
+			_("Stanbic Setting not found for currency {0}").format(currency),
+			title=_("Stanbic Setting not found"),
 		)
 
 	payments_initiation_doc = frappe.new_doc("Stanbic Payments Initiation")
 	payments_initiation_doc.payroll_entry = payroll_entry_name
 	payments_initiation_doc.stanbic_setting = stanbic_setting_name
 	payments_initiation_doc.set_data()
-	frappe.msgprint(_(f"Payments Initiation {payments_initiation_doc.name} created successfully."))
+	frappe.msgprint(_("Payments Initiation {0} created successfully.").format(payments_initiation_doc.name))
 	frappe.db.set_value(
 		"Payroll Entry",
 		payroll_entry_name,

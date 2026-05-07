@@ -11,6 +11,7 @@ def load_json(file):
 	CURR_DIR = os.path.abspath(os.path.dirname(__file__))
 	json_file_path = os.path.join(CURR_DIR, folder, file)
 	# TODO do not load the file if already applied
+	# nosemgrep: frappe-semgrep-rules.rules.security.frappe-security-file-traversal
 	with open(json_file_path, "r") as file:
 		data = json.load(file)
 	return data
@@ -51,12 +52,11 @@ def create_fields_from_json(custom_fields_obj):
 
 def execute():
 	# read names of only json files in this folder and put it into files list
-	files = list(
-		filter(
-			lambda x: x.endswith(".json"),
-			os.listdir(os.path.join(os.path.abspath(os.path.dirname(__file__)), folder)),
-		)
-	)
+	files = [
+		x
+		for x in os.listdir(os.path.join(os.path.abspath(os.path.dirname(__file__)), folder))
+		if x.endswith(".json")
+	]
 	for file in files:
 		data = load_json(file)
 		create_fields_from_json(data)

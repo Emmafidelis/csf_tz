@@ -63,7 +63,7 @@ def get_party_addresses_and_contact(party_type, party):
 		filters = {"name": party}
 
 	party_details = frappe.get_list(party_type, filters=filters, fields=["name"], as_list=True)
-	for party_detail in map(list, party_details):
+	for party_detail in (list(p) for p in party_details):
 		docname = party_detail[0]
 
 		addresses = get_party_details(party_type, docname, doctype="Address")
@@ -74,8 +74,8 @@ def get_party_addresses_and_contact(party_type, party):
 			party_detail.extend(["" for field in field_map.get("Contact", [])])
 			data.append(party_detail)
 		else:
-			addresses = map(list, addresses)
-			contacts = map(list, contacts)
+			addresses = [list(a) for a in addresses]
+			contacts = [list(c) for c in contacts]
 
 			max_length = max(len(addresses), len(contacts))
 			for idx in range(0, max_length):

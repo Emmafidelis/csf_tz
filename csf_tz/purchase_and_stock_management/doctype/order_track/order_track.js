@@ -21,7 +21,7 @@ frappe.ui.form.on('Order Track', {
          //Arrival date entered,clearing company and completion date ! blank
 		if (frm.doc.arrival_date && frm.doc.arrival_date != null ){
 		   if (frm.doc.clearing_company == '' || (frm.doc.expected_clearing_completion_date ==null)){
-			var msg = "Either Clearing Company or Clearing Completion Date is unfilled,Please fill the fields";
+			var msg = __("Either Clearing Company or Clearing Completion Date is unfilled,Please fill the fields");
 			frappe.msgprint(msg);
 			throw msg;
 

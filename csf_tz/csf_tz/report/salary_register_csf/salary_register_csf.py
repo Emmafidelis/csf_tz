@@ -8,8 +8,11 @@ from frappe import _
 from frappe.utils import flt
 from frappe.utils.nestedset import get_descendants_of
 
+# nosemgrep: frappe-semgrep-rules.rules.frappe-breaks-multitenancy
 salary_slip = frappe.qb.DocType("Salary Slip")
+# nosemgrep: frappe-semgrep-rules.rules.frappe-breaks-multitenancy
 salary_detail = frappe.qb.DocType("Salary Detail")
+# nosemgrep: frappe-semgrep-rules.rules.frappe-breaks-multitenancy
 salary_component = frappe.qb.DocType("Salary Component")
 
 

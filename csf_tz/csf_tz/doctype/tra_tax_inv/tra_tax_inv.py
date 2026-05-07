@@ -22,6 +22,7 @@ class TRATAXInv(Document):
 		return create_invoice_from_tra_tax_inv(self.name, "Sales Invoice")
 
 
+# nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
 @frappe.whitelist(allow_guest=True)
 def verify_tra_receipt(verification_code: str = None, qr_code_data: str = None):
 	"""

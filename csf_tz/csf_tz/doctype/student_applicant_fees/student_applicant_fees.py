@@ -18,14 +18,15 @@ class StudentApplicantFees(Document):
 	def after_insert(self):
 		if not check_send_fee_details_to_bank(self.company):
 			return
-		self.callback_token = binascii.hexlify(os.urandom(14)).decode()
+		callback_token = binascii.hexlify(os.urandom(14)).decode()
+		self.db_set("callback_token", callback_token)
 		series = frappe.get_value("Company", self.company, "nmb_series") or ""
 		if not series:
 			frappe.throw(_("Please set NMB User Series in Company {0}").format(self.company))
 		reference = str(series) + "R" + str(self.name)
 		if not self.abbr:
-			self.abbr = frappe.get_value("Company", self.company, "abbr") or ""
-		self.bank_reference = reference.replace("-", "").replace("RFEE" + self.abbr, "")
+			self.db_set("abbr", frappe.get_value("Company", self.company, "abbr") or "")
+		self.db_set("bank_reference", reference.replace("-", "").replace("RFEE" + self.abbr, ""))
 
 	def on_submit(self):
 		if not check_send_fee_details_to_bank(self.company):

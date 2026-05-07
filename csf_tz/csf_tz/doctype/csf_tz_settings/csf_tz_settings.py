@@ -76,7 +76,7 @@ class CSFTZSettings(Document):
 			except Exception as e:
 				frappe.log_error(f"Error starting TZ Regions population: {str(e)}")
 				frappe.msgprint(f"Failed to start TZ Regions population: {str(e)}")
-				self.populate_tz_regions = 0
+				self.db_set("populate_tz_regions", 0)
 
 	def populate_tz_regions_background(self):
 		"""Background method to populate TZ regions data"""

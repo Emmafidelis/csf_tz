@@ -69,14 +69,14 @@ def get_columns(filters, prev_month, prev_year):
 		},
 		{
 			"fieldname": "total_prev_month",
-			"label": _("{0} {1}").format(prev_month_name, prev_year),
+			"label": "{0} {1}".format(prev_month_name, prev_year),
 			"fieldtype": "Float",
 			"width": 150,
 			"precision": 2,
 		},
 		{
 			"fieldname": "total_cur_month",
-			"label": _("{0} {1}").format(cur_month_name, cur_year),
+			"label": "{0} {1}".format(cur_month_name, cur_year),
 			"fieldtype": "Float",
 			"width": 150,
 			"precision": 2,
@@ -606,7 +606,7 @@ def get_prev_ss_basic_map(filters, prev_salary_slips):
 			& (sd.salary_component.like("Basic"))
 		)
 		.groupby(sd.salary_component)
-		.orderby(sd.salary_component, Order.asc)
+		.orderby(sd.salary_component, order=Order.asc)
 	)
 	if filters.get("based_on_department") == 1:
 		prev_ss_basic_query = prev_ss_basic_query.select(ss.department)
@@ -640,7 +640,7 @@ def get_prev_ss_earn_map(filters, prev_salary_slips):
 			& (sd.salary_component.not_like("Basic"))
 		)
 		.groupby(sd.salary_component)
-		.orderby(sd.salary_component, Order.asc)
+		.orderby(sd.salary_component, order=Order.asc)
 	)
 	if filters.get("based_on_department") == 1:
 		prev_ss_earnings_query = prev_ss_earnings_query.select(ss.department)
@@ -673,7 +673,7 @@ def get_prev_ss_ded_map(filters, prev_salary_slips):
 			& (sd.parentfield == "deductions")
 		)
 		.groupby(sd.salary_component)
-		.orderby(sd.salary_component, Order.asc)
+		.orderby(sd.salary_component, order=Order.asc)
 	)
 	if filters.get("based_on_department") == 1:
 		prev_ss_deductions_query = prev_ss_deductions_query.select(ss.department)
@@ -770,7 +770,7 @@ def get_cur_ss_basic_map(filters, cur_salary_slips):
 			& (sd.salary_component.like("Basic"))
 		)
 		.groupby(sd.salary_component)
-		.orderby(sd.salary_component, Order.asc)
+		.orderby(sd.salary_component, order=Order.asc)
 	)
 	if filters.get("based_on_department") == 1:
 		cur_ss_basic_query = cur_ss_basic_query.select(ss.department)
@@ -804,7 +804,7 @@ def get_cur_ss_earning_map(filters, cur_salary_slips):
 			& (sd.salary_component.not_like("Basic"))
 		)
 		.groupby(sd.salary_component)
-		.orderby(sd.salary_component, Order.asc)
+		.orderby(sd.salary_component, order=Order.asc)
 	)
 	if filters.get("based_on_department") == 1:
 		cur_ss_earnings_query = cur_ss_earnings_query.select(ss.department)

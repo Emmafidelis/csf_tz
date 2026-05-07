@@ -168,7 +168,7 @@ def get_item_info(item_code: str):
 def get_item_prices(item_code: str, currency: str, customer: str = None, company: str = None):
 	item_code = "'{0}'".format(item_code)
 	currency = "'{0}'".format(currency)
-	unique_records = int(frappe.db.get_value("CSF TZ Settings", None, "unique_records"))
+	unique_records = int(frappe.db.get_single_value("CSF TZ Settings", "unique_records"))
 	prices_list = []
 	unique_price_list = []
 	max_records = frappe.db.get_value("Company", company, "max_records_in_dialog") or 20
@@ -225,7 +225,7 @@ def get_item_prices_custom(filters: str = None, start: str = 0, limit: str = 20)
 	if not filters:  # Default to an empty dictionary if filters is None or invalid
 		filters = {}
 
-	unique_records = int(frappe.db.get_value("CSF TZ Settings", None, "unique_records"))
+	unique_records = int(frappe.db.get_single_value("CSF TZ Settings", "unique_records"))
 	customer = filters.get("customer", "")
 	company = filters.get("company", "")
 	item_code = "'{0}'".format(filters.get("item_code", ""))
@@ -420,10 +420,8 @@ def create_indirect_expense_item(doc, method=None):
 	indirect_expenses_group = frappe.db.exists("Item Group", "Indirect Expenses")
 	if not indirect_expenses_group:
 		indirect_expenses_group = frappe.get_doc(
-			dict(
-				doctype="Item Group",
-				item_group_name="Indirect Expenses",
-			)
+			doctype="Item Group",
+			item_group_name="Indirect Expenses",
 		)
 		indirect_expenses_group.flags.ignore_permissions = True
 		frappe.flags.ignore_account_permission = True
@@ -449,22 +447,20 @@ def create_indirect_expense_item(doc, method=None):
 			doc.db_update()
 		return item.name
 	new_item = frappe.get_doc(
-		dict(
-			doctype="Item",
-			item_code=doc.account_name,
-			item_group="Indirect Expenses",
-			is_stock_item=0,
-			is_sales_item=0,
-			stock_uom="Nos",
-			include_item_in_manufacturing=0,
-			item_defaults=[
-				{
-					"company": doc.company,
-					"expense_account": doc.name,
-					"default_warehouse": "",
-				}
-			],
-		)
+		doctype="Item",
+		item_code=doc.account_name,
+		item_group="Indirect Expenses",
+		is_stock_item=0,
+		is_sales_item=0,
+		stock_uom="Nos",
+		include_item_in_manufacturing=0,
+		item_defaults=[
+			{
+				"company": doc.company,
+				"expense_account": doc.name,
+				"default_warehouse": "",
+			}
+		],
 	)
 	new_item.flags.ignore_permissions = True
 	frappe.flags.ignore_account_permission = True
@@ -1012,7 +1008,7 @@ def get_stock_balance_for(
 @frappe.whitelist()
 def make_stock_reconciliation_for_all_pending_material_request(*args):
 	auto_stock_reconciliation = (
-		frappe.db.get_value("CSF TZ Settings", "CSF TZ Settings", "auto_stock_reconciliation") or 0
+		frappe.db.get_single_value("CSF TZ Settings", "auto_stock_reconciliation") or 0
 	)
 	if auto_stock_reconciliation != 1:
 		return
@@ -1231,15 +1227,13 @@ def make_withholding_tax_gl_entries_for_purchase(doc: str, method: str):
 			+ str(doc.conversion_rate)
 		)
 		jv_doc = frappe.get_doc(
-			dict(
-				doctype="Journal Entry",
-				voucher_type="Contra Entry",
-				posting_date=doc.posting_date,
-				accounts=jl_rows,
-				company=doc.company,
-				multi_currency=(0 if doc.party_account_currency == default_currency else 1),
-				user_remark=user_remark,
-			)
+			doctype="Journal Entry",
+			voucher_type="Contra Entry",
+			posting_date=doc.posting_date,
+			accounts=jl_rows,
+			company=doc.company,
+			multi_currency=(0 if doc.party_account_currency == default_currency else 1),
+			user_remark=user_remark,
 		)
 		console(jl_rows)
 		jv_doc.flags.ignore_permissions = True
@@ -1335,7 +1329,7 @@ def enroll_students(self):
 @frappe.whitelist()
 def get_tax_category(doc_type: str, company: str):
 	fetch_default_tax_category = (
-		frappe.db.get_value("CSF TZ Settings", None, "fetch_default_tax_category") or 0
+		frappe.db.get_single_value("CSF TZ Settings", "fetch_default_tax_category") or 0
 	)
 	if int(fetch_default_tax_category) != 1:
 		return ""
@@ -1444,15 +1438,13 @@ def make_withholding_tax_gl_entries_for_sales(doc: str, method: str):
 			+ str(doc.conversion_rate)
 		)
 		jv_doc = frappe.get_doc(
-			dict(
-				doctype="Journal Entry",
-				voucher_type="Contra Entry",
-				posting_date=doc.posting_date,
-				accounts=jl_rows,
-				company=doc.company,
-				multi_currency=(0 if doc.party_account_currency == default_currency else 1),
-				user_remark=user_remark,
-			)
+			doctype="Journal Entry",
+			voucher_type="Contra Entry",
+			posting_date=doc.posting_date,
+			accounts=jl_rows,
+			company=doc.company,
+			multi_currency=(0 if doc.party_account_currency == default_currency else 1),
+			user_remark=user_remark,
 		)
 		jv_doc.flags.ignore_permissions = True
 		frappe.flags.ignore_account_permission = True
@@ -1942,10 +1934,10 @@ def validate_grand_total(doc, method):
 		if payment_amount and total_amount != payment_amount:
 			frappe.throw(
 				_(
-					f"<h4 class='text-center' style='background-color: #D3D3D3; font-weight: bold; font-size: 14px'>\
-                Total Amount for all Items: <strong>{total_amount}</strong> must be equal to Paid Amount: <strong>{payment_amount}</strong>,<br>\
-                Please check before submitting this invoice </h4>"
-				)
+					"<h4 class='text-center' style='background-color: #D3D3D3; font-weight: bold; font-size: 14px'>"
+					"Total Amount for all Items: <strong>{0}</strong> must be equal to Paid Amount: <strong>{1}</strong>,<br>"
+					"Please check before submitting this invoice </h4>"
+				).format(total_amount, payment_amount)
 			)
 
 
@@ -2397,7 +2389,7 @@ def get_item_prices_custom_po(filters: str = None, start: str = 0, limit: str = 
 	if not filters:  # Default to an empty dictionary if filters is None or invalid
 		filters = {}
 
-	unique_records = int(frappe.db.get_value("CSF TZ Settings", None, "unique_records"))
+	unique_records = int(frappe.db.get_single_value("CSF TZ Settings", "unique_records"))
 	customer = filters.get("customer", "")
 	company = filters.get("company", "")
 	item_code = "'{0}'".format(filters.get("item_code", ""))
@@ -2454,7 +2446,7 @@ def get_item_prices_custom_po(filters: str = None, start: str = 0, limit: str = 
 def get_item_prices_po(item_code: str, currency: str, customer: str = None, company: str = None):
 	item_code = "'{0}'".format(item_code)
 	currency = "'{0}'".format(currency)
-	unique_records = int(frappe.db.get_value("CSF TZ Settings", None, "unique_records"))
+	unique_records = int(frappe.db.get_single_value("CSF TZ Settings", "unique_records"))
 	prices_list = []
 	unique_price_list = []
 	max_records = frappe.db.get_value("Company", company, "max_records_in_dialog") or 20

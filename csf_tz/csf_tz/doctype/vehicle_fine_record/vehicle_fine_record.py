@@ -119,7 +119,7 @@ def get_fine(number_plate: str = None, reference: str = None):
 	data = result.get("pending_transactions", [])
 
 	if data:
-		print(f"Vehicle: {number_plate or reference} has no pending transactions")
+		frappe.logger().info(f"Vehicle: {number_plate or reference} has no pending transactions")
 		return fine_list
 	else:
 		if frappe.db.exists("Vehicle Fine Record", payload):

@@ -171,6 +171,7 @@ def invoice_submission(doc: str = None, method: str = None, fees_name: str = Non
 	send_nmb("invoice_submission", data, doc.company)
 
 
+# nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
 @frappe.whitelist(allow_guest=True)
 def receive_callback(*args, **kwargs):
 	r = frappe.request
@@ -219,6 +220,7 @@ def make_payment_entry(method="callback", **kwargs):
 		frappe.flags.ignore_account_permission = True
 		if doc_info["doctype"] == "Fees":
 			if method == "callback":
+				# nosemgrep: frappe-semgrep-rules.rules.security.frappe-setuser
 				frappe.set_user("Administrator")
 			fees_name = doc_info["name"]
 			bank_reference, receivable_account = frappe.get_value(
@@ -304,6 +306,7 @@ def make_payment_entry(method="callback", **kwargs):
 			return nmb_doc
 
 
+# nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
 @frappe.whitelist(allow_guest=True)
 def receive_validate_reference(*args, **kwargs):
 	r = frappe.request

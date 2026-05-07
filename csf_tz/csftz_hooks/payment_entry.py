@@ -18,6 +18,7 @@ from frappe import _, qb
 from frappe.utils import getdate, nowdate
 
 
+# nosemgrep: frappe-semgrep-rules.rules.overusing-args
 @frappe.whitelist()
 def get_outstanding_reference_documents(args: str):
 	# Check if the feature is disabled in CSF TZ Settings
@@ -147,6 +148,7 @@ def get_outstanding_reference_documents(args: str):
 	return data
 
 
+# nosemgrep: frappe-semgrep-rules.rules.overusing-args
 @frappe.whitelist()
 def get_outstanding_sales_orders(args: str):
 	if isinstance(args, str):

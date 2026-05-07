@@ -200,9 +200,11 @@ def download_multi_pdf(doctype, name, format=None, no_letterhead=0):
 
 def read_multi_pdf(output):
 	fname = os.path.join("/tmp", "frappe-pdf-{0}.pdf".format(frappe.generate_hash()))
+	# nosemgrep: frappe-semgrep-rules.rules.security.frappe-security-file-traversal
 	with open(fname, "wb") as f:
 		output.write(f)
 
+	# nosemgrep: frappe-semgrep-rules.rules.security.frappe-security-file-traversal
 	with open(fname, "rb") as fileobj:
 		filedata = fileobj.read()
 

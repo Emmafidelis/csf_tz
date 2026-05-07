@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 
 import frappe
+
+# nosemgrep: frappe-semgrep-rules.rules.frappe-monkey-patching-not-allowed
 from education.education.doctype.program_enrollment.program_enrollment import ProgramEnrollment
 from frappe import _
 

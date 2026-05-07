@@ -90,7 +90,7 @@ def get_data(filters):
 				filters["item_description"] = item_description
 			else:
 				frappe.msgprint(
-					_("No description found for item with barcode: ") + filters.get("barcode"),
+					_("No description found for item with barcode: {0}").format(filters.get("barcode")),
 					title=_("Warning"),
 				)
 				return []  # Exit function if no description is found

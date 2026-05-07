@@ -119,7 +119,7 @@ def get_refresh_token():
 
 
 @frappe.whitelist()
-def get_payload(doc):
+def get_payload(doc: str):
 	"""Generate payload for Simplify VFD"""
 
 	items = []
@@ -189,7 +189,9 @@ def get_payload(doc):
 
 
 @frappe.whitelist()
-def post_fiscal_receipt(doc=None, method="POST", payload={}, invoice_id=None, preview=False):
+def post_fiscal_receipt(
+	doc: str = None, method: str = "POST", payload: str = {}, invoice_id: str = None, preview: str = False
+):
 	"""Post fiscal receipt to Simplify VFD
 	Parameters
 	----------

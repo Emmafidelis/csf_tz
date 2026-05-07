@@ -4,7 +4,7 @@ from frappe.utils import flt
 
 
 @frappe.whitelist()
-def get_data(filters):
+def get_data(filters: str):
 	filters = frappe._dict(filters)
 	data = get_stock_ledger_entries(filters)
 	itewise_balance_qty = {}

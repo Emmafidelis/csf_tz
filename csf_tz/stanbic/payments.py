@@ -3,7 +3,7 @@ from frappe import _
 
 
 @frappe.whitelist()
-def make_payments_initiation(payroll_entry_name, currency, stanbic_setting_name=None):
+def make_payments_initiation(payroll_entry_name: str, currency: str, stanbic_setting_name: str = None):
 	if currency and not stanbic_setting_name:
 		company, cheque_number = frappe.get_cached_value(
 			"Payroll Entry", payroll_entry_name, ["company", "cheque_number"]

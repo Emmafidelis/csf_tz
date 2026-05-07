@@ -86,7 +86,7 @@ def is_budget_check_enabled(doctype):
 
 
 @frappe.whitelist()
-def check_budget_before_submit(doctype, docname, setting_field=None):
+def check_budget_before_submit(doctype: str, docname: str, setting_field: str = None):
 	"""
 	Check budget for a document in draft status.
 

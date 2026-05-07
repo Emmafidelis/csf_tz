@@ -458,7 +458,7 @@ def get_departments(department, company):
 
 
 @frappe.whitelist()
-def approve(data):
+def approve(data: str):
 	import json
 
 	from frappe.utils.background_jobs import enqueue

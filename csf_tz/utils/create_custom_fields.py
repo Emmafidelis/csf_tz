@@ -63,7 +63,7 @@ def execute():
 
 
 @frappe.whitelist()
-def export_custom_fields(docnames):
+def export_custom_fields(docnames: str):
 	docnames = frappe.parse_json(docnames)
 	custom_fields = []
 

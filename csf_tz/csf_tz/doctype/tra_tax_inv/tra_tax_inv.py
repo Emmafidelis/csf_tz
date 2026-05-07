@@ -23,7 +23,7 @@ class TRATAXInv(Document):
 
 
 @frappe.whitelist(allow_guest=True)
-def verify_tra_receipt(verification_code=None, qr_code_data=None):
+def verify_tra_receipt(verification_code: str = None, qr_code_data: str = None):
 	"""
 	Verify TRA receipt and create TRA TAX Inv document
 
@@ -819,7 +819,7 @@ def create_tra_tax_inv_document_safe(verification_code, receipt_data, verificati
 
 
 @frappe.whitelist()
-def create_invoice_from_tra_tax_inv(tra_tax_inv_name, invoice_type):
+def create_invoice_from_tra_tax_inv(tra_tax_inv_name: str, invoice_type: str):
 	"""
 	Create Purchase Invoice or Sales Invoice from TRA Tax Inv
 

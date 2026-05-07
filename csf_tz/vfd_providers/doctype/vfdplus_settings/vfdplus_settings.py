@@ -221,7 +221,9 @@ def get_payload(doc):
 
 
 @frappe.whitelist()
-def post_fiscal_receipt(doc=None, method="POST", payload={}, invoice_id=None, preview=False):
+def post_fiscal_receipt(
+	doc: str = None, method: str = "POST", payload: str = {}, invoice_id: str = None, preview: str = False
+):
 	"""Post fiscal receipt to VFDPlus
 	Parameters
 	----------
@@ -329,7 +331,7 @@ def get_serial_info(doc, method):
 
 
 @frappe.whitelist()
-def get_account_info(company):
+def get_account_info(company: str):
 	"""Get serial info from VFDPlus
 	Parameters
 	----------

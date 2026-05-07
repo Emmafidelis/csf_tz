@@ -1,19 +1,21 @@
-cur_frm.cscript.get_invoices = function (frm) {
-	cur_frm.clear_table("efd_z_report_invoices")
-	frappe.call({
+frappe.ui.form.on('EFD Z Report', {
+	get_invoices: function (frm) {
+		frm.clear_table("efd_z_report_invoices")
+		frappe.call({
 			method: "get_sales_invoice",
-			doc: cur_frm.doc,
+			doc: frm.doc,
 			args: {
-				"electronic_fiscal_device": cur_frm.doc.electronic_fiscal_device,
-				"date_and_time": cur_frm.doc.z_report_date_time,
+				"electronic_fiscal_device": frm.doc.electronic_fiscal_device,
+				"date_and_time": frm.doc.z_report_date_time,
 			},
 			freeze: true,
 			freeze_message: "Fetching Invoices...",
 			callback: function(r) {
-                cur_frm.refresh_field("efd_z_report_invoices")
-            }
+				frm.refresh_field("efd_z_report_invoices")
+			}
 		});
-}
+	}
+})
 
 frappe.ui.form.on('EFD Z Report Invoice', {
 	include: (frm) => {

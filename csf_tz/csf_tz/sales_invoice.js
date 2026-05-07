@@ -318,10 +318,10 @@ frappe.ui.form.on("Sales Invoice Item", {
       // Check if the item_code is "Trade In"
       if (row.item_code === "Trade In") {
         // Use toggle_reqd to make the UOM field non-mandatory
-        cur_frm.fields_dict.items.grid.toggle_reqd("uom", false);
+        frm.fields_dict.items.grid.toggle_reqd("uom", false);
       } else {
         // For non "Trade In" items, make the UOM field mandatory
-        cur_frm.fields_dict.items.grid.toggle_reqd("uom", true);
+        frm.fields_dict.items.grid.toggle_reqd("uom", true);
       }
       set_trade_in_fields_readonly(frm, row);
     } else {

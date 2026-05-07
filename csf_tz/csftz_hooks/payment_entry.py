@@ -19,7 +19,7 @@ from frappe.utils import getdate, nowdate
 
 
 @frappe.whitelist()
-def get_outstanding_reference_documents(args):
+def get_outstanding_reference_documents(args: str):
 	# Check if the feature is disabled in CSF TZ Settings
 	if frappe.db.get_single_value("CSF TZ Settings", "disable_get_outstanding_functionality"):
 		return []
@@ -148,7 +148,7 @@ def get_outstanding_reference_documents(args):
 
 
 @frappe.whitelist()
-def get_outstanding_sales_orders(args):
+def get_outstanding_sales_orders(args: str):
 	if isinstance(args, str):
 		args = json.loads(args)
 

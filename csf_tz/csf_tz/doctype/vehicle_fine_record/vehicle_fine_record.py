@@ -77,7 +77,7 @@ def check_fine_all_vehicles(batch_size=20):
 
 
 @frappe.whitelist()
-def get_fine(number_plate=None, reference=None):
+def get_fine(number_plate: str = None, reference: str = None):
 	if not number_plate and not reference:
 		print_out(
 			_("Please provide either number plate or reference"),

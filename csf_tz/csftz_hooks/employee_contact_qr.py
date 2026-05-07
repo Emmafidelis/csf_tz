@@ -7,7 +7,7 @@ from frappe import _
 
 
 @frappe.whitelist()
-def generate_contact_qr(employee):
+def generate_contact_qr(employee: str):
 	employee_doc = frappe.get_doc("Employee", employee)
 
 	# Retrieve contact details

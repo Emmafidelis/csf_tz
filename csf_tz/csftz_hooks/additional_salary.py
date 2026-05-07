@@ -4,7 +4,7 @@ from frappe.utils import add_days, add_months, flt, getdate, today
 
 
 @frappe.whitelist()
-def create_additional_salary_journal(doc, method):
+def create_additional_salary_journal(doc: str, method: str):
 	if frappe.get_value("Salary Component", doc.salary_component, "create_cash_journal"):
 		cash_account = frappe.db.get_single_value(
 			"CSF TZ Settings", "default_account_for_additional_component_cash_journal"
@@ -149,7 +149,7 @@ def generate_additional_salary_records():
 
 
 @frappe.whitelist()
-def get_employee_base_salary_in_hours(employee, payroll_date):
+def get_employee_base_salary_in_hours(employee: str, payroll_date: str):
 	"""
 	Returns the base salary in hours of the employee for this month
 	"""

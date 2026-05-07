@@ -20,7 +20,9 @@ def create_course_enrollments_override(doc, method):
 
 
 @frappe.whitelist()
-def get_fee_schedule(program, academic_year, academic_term=None, student_category=None):
+def get_fee_schedule(
+	program: str, academic_year: str, academic_term: str = None, student_category: str = None
+):
 	"""Returns Fee Schedule.
 
 	:param program: Program.

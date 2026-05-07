@@ -3,7 +3,7 @@ from frappe import _
 
 
 @frappe.whitelist()
-def get_customer_total_unpaid_amount(customer, company=None):
+def get_customer_total_unpaid_amount(customer: str, company: str = None):
 	if not customer:
 		return 0
 	company_condition = ""

@@ -22,7 +22,7 @@ from csf_tz import console
 
 
 @frappe.whitelist()
-def generate_qrcode(qrcode_data):
+def generate_qrcode(qrcode_data: str):
 	c = pyqrcode.create(qrcode_data)
 	s = io.BytesIO()
 	c.png(s, scale=3)
@@ -31,12 +31,12 @@ def generate_qrcode(qrcode_data):
 
 
 @frappe.whitelist()
-def app_error_log(title, error):
+def app_error_log(title: str, error: str):
 	frappe.log(traceback.format_exc())
 
 
 @frappe.whitelist()
-def print_out(message, alert=False, add_traceback=False, to_error_log=False):
+def print_out(message: str, alert: str = False, add_traceback: str = False, to_error_log: str = False):
 	if not message:
 		return
 
@@ -129,7 +129,7 @@ def get_app_branch(app):
 
 
 @frappe.whitelist()
-def get_item_info(item_code):
+def get_item_info(item_code: str):
 	sle = get_stock_ledger_entries(item_code)
 	iwb_map = {}
 	float_precision = cint(frappe.db.get_default("float_precision")) or 3
@@ -165,7 +165,7 @@ def get_item_info(item_code):
 
 
 @frappe.whitelist()
-def get_item_prices(item_code, currency, customer=None, company=None):
+def get_item_prices(item_code: str, currency: str, customer: str = None, company: str = None):
 	item_code = "'{0}'".format(item_code)
 	currency = "'{0}'".format(currency)
 	unique_records = int(frappe.db.get_value("CSF TZ Settings", None, "unique_records"))
@@ -213,7 +213,7 @@ def get_item_prices(item_code, currency, customer=None, company=None):
 
 
 @frappe.whitelist()
-def get_item_prices_custom(filters=None, start=0, limit=20):
+def get_item_prices_custom(filters: str = None, start: str = 0, limit: str = 20):
 	if isinstance(filters, str):  # If filters is a string, deserialize it
 		import json
 
@@ -279,7 +279,7 @@ def get_item_prices_custom(filters=None, start=0, limit=20):
 
 
 @frappe.whitelist()
-def create_delivery_note(doc=None, method=None, doc_name=None):
+def create_delivery_note(doc: str = None, method: str = None, doc_name: str = None):
 	if not doc:
 		doc = frappe.get_doc("Sales Invoice", doc_name)
 	if not doc:
@@ -335,7 +335,7 @@ def check_item_is_maintain(item_name):
 
 
 @frappe.whitelist()
-def make_delivery_note(source_name, target_doc=None, set_warehouse=None):
+def make_delivery_note(source_name: str, target_doc: str = None, set_warehouse: str = None):
 	def warehouse_condition(doc):
 		if set_warehouse:
 			return doc.warehouse == set_warehouse
@@ -495,7 +495,7 @@ def check_expenses_in_parent_accounts(account_name):
 
 
 @frappe.whitelist()
-def add_indirect_expense_item(account_name):
+def add_indirect_expense_item(account_name: str):
 	account = frappe.get_doc("Account", account_name)
 	return create_indirect_expense_item(account)
 
@@ -652,7 +652,9 @@ def get_item_balance(item_code, company, warehouse=None):
 
 
 @frappe.whitelist()
-def validate_item_remaining_qty(item_code, company, warehouse=None, stock_qty=None, so_detail=None):
+def validate_item_remaining_qty(
+	item_code: str, company: str, warehouse: str = None, stock_qty: str = None, so_detail: str = None
+):
 	if not warehouse or not stock_qty:
 		return
 	if frappe.db.get_single_value("Stock Settings", "allow_negative_stock"):
@@ -1079,7 +1081,7 @@ def calculate_total_net_weight(doc, method):
 
 
 @frappe.whitelist()
-def get_warehouse_options(company):
+def get_warehouse_options(company: str):
 	warehouses = frappe.get_all(
 		"Warehouse",
 		filters=[
@@ -1148,7 +1150,7 @@ def validate_net_rate(doc, method):
 
 
 @frappe.whitelist()
-def make_withholding_tax_gl_entries_for_purchase(doc, method):
+def make_withholding_tax_gl_entries_for_purchase(doc: str, method: str):
 	if method == "From Front End":
 		doc = frappe.get_doc(json.loads(doc))
 
@@ -1258,7 +1260,7 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
 
 
 @frappe.whitelist()
-def set_fee_abbr(doc=None, method=None):
+def set_fee_abbr(doc: str = None, method: str = None):
 	doc.company = frappe.get_value("Fee Structure", doc.fee_structure, "company")
 	send_fee_details_to_bank = frappe.get_value("Company", doc.company, "send_fee_details_to_bank") or 0
 	if not send_fee_details_to_bank:
@@ -1331,7 +1333,7 @@ def enroll_students(self):
 
 
 @frappe.whitelist()
-def get_tax_category(doc_type, company):
+def get_tax_category(doc_type: str, company: str):
 	fetch_default_tax_category = (
 		frappe.db.get_value("CSF TZ Settings", None, "fetch_default_tax_category") or 0
 	)
@@ -1362,7 +1364,7 @@ def get_tax_category(doc_type, company):
 
 
 @frappe.whitelist()
-def make_withholding_tax_gl_entries_for_sales(doc, method):
+def make_withholding_tax_gl_entries_for_sales(doc: str, method: str):
 	if method == "From Front End":
 		doc = frappe.get_doc(json.loads(doc))
 
@@ -1948,12 +1950,12 @@ def validate_grand_total(doc, method):
 
 
 @frappe.whitelist()
-def account_exists(account_name):
+def account_exists(account_name: str):
 	return frappe.db.exists("Account", {"account_name": account_name})
 
 
 @frappe.whitelist()
-def auto_create_account(abbr):
+def auto_create_account(abbr: str):
 	account_data = [
 		{
 			"account_name": "Payroll Liabilities",
@@ -2037,7 +2039,7 @@ def auto_create_account(abbr):
 
 
 @frappe.whitelist()
-def create_item_tax_template(abbr):
+def create_item_tax_template(abbr: str):
 	item_tax_template_list = [
 		{"title": "Tanzania Exempted Sales", "tax_type": f"OUTPUT VAT - 18% - {abbr}"},
 		{
@@ -2099,7 +2101,7 @@ def create_tax_category():
 
 
 @frappe.whitelist()
-def linking_tax_template(doctype, default_tax_template, abbr):
+def linking_tax_template(doctype: str, default_tax_template: str, abbr: str):
 	item_list = frappe.db.get_all("Item", filters=default_tax_template)
 
 	for item in item_list:
@@ -2140,7 +2142,7 @@ def linking_tax_template(doctype, default_tax_template, abbr):
 
 
 @frappe.whitelist()
-def make_salary_components_and_structure(abbr):
+def make_salary_components_and_structure(abbr: str):
 	salary_components_earnings_list = [
 		{
 			"salary_component": "Basic",
@@ -2383,7 +2385,7 @@ def make_salary_components_and_structure(abbr):
 
 
 @frappe.whitelist()
-def get_item_prices_custom_po(filters=None, start=0, limit=20):
+def get_item_prices_custom_po(filters: str = None, start: str = 0, limit: str = 20):
 	if isinstance(filters, str):  # If filters is a string, deserialize it
 		import json
 
@@ -2449,7 +2451,7 @@ def get_item_prices_custom_po(filters=None, start=0, limit=20):
 
 
 @frappe.whitelist()
-def get_item_prices_po(item_code, currency, customer=None, company=None):
+def get_item_prices_po(item_code: str, currency: str, customer: str = None, company: str = None):
 	item_code = "'{0}'".format(item_code)
 	currency = "'{0}'".format(currency)
 	unique_records = int(frappe.db.get_value("CSF TZ Settings", None, "unique_records"))
@@ -2680,7 +2682,7 @@ def create_trade_in_stock_entry(doc, method):
 
 
 @frappe.whitelist()
-def create_write_off_jv_si(sales_invoice, account):
+def create_write_off_jv_si(sales_invoice: str, account: str):
 	settings = frappe.get_single("CSF TZ Settings")
 
 	# Feature flag check
@@ -2735,7 +2737,7 @@ def create_write_off_jv_si(sales_invoice, account):
 
 
 @frappe.whitelist()
-def create_write_off_jv_pi(purchase_invoice, account):
+def create_write_off_jv_pi(purchase_invoice: str, account: str):
 	settings = frappe.get_single("CSF TZ Settings")
 
 	# Feature flag check
@@ -2790,7 +2792,7 @@ def create_write_off_jv_pi(purchase_invoice, account):
 
 
 @frappe.whitelist()
-def create_write_off_jv_pe(payment_entry, account):
+def create_write_off_jv_pe(payment_entry: str, account: str):
 	settings = frappe.get_single("CSF TZ Settings")
 
 	# Feature flag check

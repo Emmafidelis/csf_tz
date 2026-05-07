@@ -107,7 +107,7 @@ def get_columns(filters):
 		{"fieldname": "department", "label": _("Department"), "fieldtype": "Link", "options": "Department"},
 		{"fieldname": "shift", "label": _("Shift"), "fieldtype": "Link", "options": "Shift Type"},
 		{"fieldname": "date", "label": _("Date"), "fieldtype": "Date"},
-		{"fieldname": "week_day", "label": _("Week Day "), "fieldtype": "Data"},
+		{"fieldname": "week_day", "label": _("Week Day"), "fieldtype": "Data"},
 		# for checkin
 		{"fieldname": "actual_checkin_time", "label": _("Actual Time to Checkin"), "fieldtype": "Time"},
 		{"fieldname": "checkin_time", "label": _("Checkin Time"), "fieldtype": "Time"},

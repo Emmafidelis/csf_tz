@@ -3,7 +3,7 @@ from frappe import _
 
 
 @frappe.whitelist()
-def add_biometric_log(data):
+def add_biometric_log(data: str):
 	"""Add biometric log"""
 	log = frappe.new_doc("CSF TZ Biometric Log")
 	log.user_id = data

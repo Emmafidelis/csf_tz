@@ -169,7 +169,7 @@ def _attach_payroll_batch_summary_pdf(target_name: str, doc, payroll_entry_name:
 
 
 @frappe.whitelist()
-def make_kcb_payments_initiation_from_payment_entries(payment_entries):
+def make_kcb_payments_initiation_from_payment_entries(payment_entries: str):
 	_require_kcb_enabled()
 	settings = frappe.get_single("KCB Settings")
 	if isinstance(payment_entries, str):
@@ -275,7 +275,7 @@ def make_kcb_payments_initiation_from_payment_entries(payment_entries):
 
 
 @frappe.whitelist()
-def make_kcb_payments_initiation_from_payroll_entry(payroll_entry_name):
+def make_kcb_payments_initiation_from_payroll_entry(payroll_entry_name: str):
 	_require_kcb_enabled()
 	settings = frappe.get_single("KCB Settings")
 	payroll_entry = frappe.get_doc("Payroll Entry", payroll_entry_name)

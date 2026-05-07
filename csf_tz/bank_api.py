@@ -130,7 +130,7 @@ def send_nmb(method, data, company):
 
 
 @frappe.whitelist()
-def invoice_submission(doc=None, method=None, fees_name=None):
+def invoice_submission(doc: str = None, method: str = None, fees_name: str = None):
 	send_fee_details_to_bank = frappe.get_value("Company", doc.company, "send_fee_details_to_bank") or 0
 
 	partial_payment = frappe.get_value("Edu Tz Settings", "Edu Tz Settings", "partial_payment")
@@ -444,7 +444,7 @@ def get_fees_default_accounts(company):
 
 
 @frappe.whitelist()
-def make_payment_entry_from_call(docname):
+def make_payment_entry_from_call(docname: str):
 	nmb_doc = frappe.get_doc("NMB Callback", docname)
 	make_payment_entry(method="frontend", kwargs=nmb_doc)
 

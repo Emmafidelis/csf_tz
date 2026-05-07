@@ -20,7 +20,7 @@ from csf_tz.vfd_providers.doctype.vfdplus_settings.vfdplus_settings import (
 
 
 @frappe.whitelist()
-def generate_tra_vfd(docname, sinv_doc=None, method="POST", caller="Frontend"):
+def generate_tra_vfd(docname: str, sinv_doc: str = None, method: str = "POST", caller: str = "Frontend"):
 	if not sinv_doc:
 		sinv_doc = frappe.get_doc("Sales Invoice", docname)
 

@@ -11,15 +11,15 @@ from frappe.utils import add_days, flt, formatdate, getdate
 
 @frappe.whitelist()
 def get(
-	chart_name=None,
-	chart=None,
-	no_cache=None,
-	filters=None,
-	from_date=None,
-	to_date=None,
-	timespan=None,
-	time_interval=None,
-	heatmap_year=None,
+	chart_name: str = None,
+	chart: str = None,
+	no_cache: str = None,
+	filters: str = None,
+	from_date: str = None,
+	to_date: str = None,
+	timespan: str = None,
+	time_interval: str = None,
+	heatmap_year: str = None,
 ):
 	"""
 	Main entry point for Multi_Account Balance Timeline dashboard chart source
@@ -30,7 +30,7 @@ def get(
 
 
 @frappe.whitelist()
-def get_sample_data(chart_name=None, **kwargs):
+def get_sample_data(chart_name: str = None, **kwargs):
 	"""
 	Generate sample data for testing when no real transactions exist
 	This helps users see how the chart would look with data
@@ -65,7 +65,7 @@ def get_sample_data(chart_name=None, **kwargs):
 
 
 @frappe.whitelist()
-def create_sample_accounts(company):
+def create_sample_accounts(company: str):
 	"""
 	Create sample bank accounts for testing purposes
 
@@ -80,7 +80,7 @@ def create_sample_accounts(company):
 
 
 @frappe.whitelist()
-def debug_chart_data(company=None):
+def debug_chart_data(company: str = None):
 	"""
 	Debug function to test chart data generation step by step
 	"""
@@ -610,7 +610,7 @@ class MultiBankBalance:
 		return chart_data
 
 	@frappe.whitelist()
-	def create_sample_accounts(self, company):
+	def create_sample_accounts(self, company: str):
 		"""
 		Create sample bank accounts for testing purposes
 
@@ -870,7 +870,7 @@ def get_account_currencies(company):
 
 
 @frappe.whitelist()
-def create_test_transactions(company, account_name=None, amount=10000):
+def create_test_transactions(company: str, account_name: str = None, amount: str = 10000):
 	"""
 	Create test transactions for a bank account to generate chart data
 

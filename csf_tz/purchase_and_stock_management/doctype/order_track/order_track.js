@@ -10,8 +10,8 @@ frappe.ui.form.on('Order Track', {
         //alert(cur_frm.doc.docstatus)
 
         //make product inspection ie. submitted
-         if(cur_frm.doc.docstatus === 1 ) {
-		      cur_frm.add_custom_button(__('Product Inspection'), function(){frm.events.make_product_inspection(frm)}, __("Make"));
+         if(frm.doc.docstatus === 1 ) {
+		      frm.add_custom_button(__('Product Inspection'), function(){frm.events.make_product_inspection(frm)}, __("Make"));
 
 
         }
@@ -51,10 +51,10 @@ frappe.ui.form.on('Order Track', {
     },
 
           //Product Inspection function
-    make_product_inspection:function(){
+    make_product_inspection:function(frm){
         frappe.model.open_mapped_doc({
 			method: "erpnext.purchase_and_stock_management.doctype.order_track.order_track.make_product_inspection",
-			frm: cur_frm
+			frm: frm
 		})
 
     },

@@ -190,9 +190,9 @@ def get_gl_entries(filters, accounting_dimensions):
 			conditions=get_conditions(filters).replace("and cost_center in %(cost_center)s ", ""),
 		)
 
-	gl_entries_all_except_students = (
-		frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
-			"""
+	# nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
+	gl_entries_all_except_students = frappe.db.sql(
+		"""
         select
             gle.name as gl_entry, posting_date, account, party_type, party,
             voucher_type, voucher_no, {dimension_fields}
@@ -204,20 +204,19 @@ def get_gl_entries(filters, accounting_dimensions):
         {distributed_cost_center_query}
         {order_by_statement}
         """.format(
-				dimension_fields=dimension_fields,
-				select_fields=select_fields,
-				conditions=get_conditions(filters),
-				distributed_cost_center_query=distributed_cost_center_query,
-				order_by_statement=order_by_statement,
-			),
-			filters,
-			as_dict=1,
-		)
+			dimension_fields=dimension_fields,
+			select_fields=select_fields,
+			conditions=get_conditions(filters),
+			distributed_cost_center_query=distributed_cost_center_query,
+			order_by_statement=order_by_statement,
+		),
+		filters,
+		as_dict=1,
 	)
 
-	gl_entries_students = (
-		frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
-			"""
+	# nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
+	gl_entries_students = frappe.db.sql(
+		"""
         select
             gle.name as gl_entry, posting_date, account, party_type, CONCAT(std.first_name, " ", IFNULL(std.middle_name, ''), " ", IFNULL(std.last_name, '')) as party,
             voucher_type, voucher_no, {dimension_fields}
@@ -230,15 +229,14 @@ def get_gl_entries(filters, accounting_dimensions):
         {distributed_cost_center_query}
         {order_by_statement}
         """.format(
-				dimension_fields=dimension_fields,
-				select_fields=select_fields,
-				conditions=get_conditions(filters),
-				distributed_cost_center_query=distributed_cost_center_query,
-				order_by_statement=order_by_statement,
-			),
-			filters,
-			as_dict=1,
-		)
+			dimension_fields=dimension_fields,
+			select_fields=select_fields,
+			conditions=get_conditions(filters),
+			distributed_cost_center_query=distributed_cost_center_query,
+			order_by_statement=order_by_statement,
+		),
+		filters,
+		as_dict=1,
 	)
 
 	gl_entries = (gl_entries_all_except_students or []) + (gl_entries_students or [])

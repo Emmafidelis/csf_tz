@@ -188,9 +188,9 @@ def hours_per_day_data(conditions, filters):
 
 
 def hours_per_project_data(conditions, filters):
-	project_details = (
-		frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
-			"""
+	# nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
+	project_details = frappe.db.sql(
+		"""
 		SELECT ts.employee,
 			ts.employee_name,
 			tsd.project,
@@ -200,9 +200,8 @@ def hours_per_project_data(conditions, filters):
 		WHERE {conditions}
 		ORDER BY ts.start_date
 		""".format(conditions=conditions),
-			filters,
-			as_dict=1,
-		)
+		filters,
+		as_dict=1,
 	)
 
 	data = []
@@ -213,9 +212,9 @@ def hours_per_project_data(conditions, filters):
 
 
 def get_timesheet_logs(conditions, filters):
-	timesheet_logs = (
-		frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
-			"""
+	# nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
+	timesheet_logs = frappe.db.sql(
+		"""
 		SELECT ts.employee AS employee,
 				ts.employee_name AS employee_name,
 				tsd.activity_type AS activity_type,
@@ -230,8 +229,7 @@ def get_timesheet_logs(conditions, filters):
 		WHERE {conditions}
 		ORDER BY ts.start_date
 	""".format(conditions=conditions),
-			filters,
-			as_dict=1,
-		)
+		filters,
+		as_dict=1,
 	)
 	return timesheet_logs

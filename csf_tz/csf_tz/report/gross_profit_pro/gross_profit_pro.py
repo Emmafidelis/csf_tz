@@ -431,16 +431,15 @@ class GrossProfitGenerator(object):
 		if self.filters.to_date:
 			condition += " AND modified='%s'" % (self.filters.to_date)
 
-		last_purchase_rate = (
-			frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
-				"""
+		# nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
+		last_purchase_rate = frappe.db.sql(
+			"""
 		select (a.base_rate / a.conversion_factor)
 		from `tabPurchase Invoice Item` a
 		where a.item_code = %s and a.docstatus=1
 		{0}
 		order by a.modified desc limit 1""".format(condition),
-				item_code,
-			)
+			item_code,
 		)
 
 		return flt(last_purchase_rate[0][0]) if last_purchase_rate else 0
@@ -467,9 +466,9 @@ class GrossProfitGenerator(object):
 		if self.filters.get("item_code"):
 			conditions += " and `tabSales Invoice Item`.item_code = %(item_code)s"
 
-		self.si_list = (
-			frappe.db.sql(  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
-				"""
+		# nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
+		self.si_list = frappe.db.sql(
+			"""
 			select
 				`tabSales Invoice Item`.parenttype, `tabSales Invoice Item`.parent,
 				`tabSales Invoice`.posting_date, `tabSales Invoice`.posting_time,
@@ -492,14 +491,13 @@ class GrossProfitGenerator(object):
 				`tabSales Invoice`.docstatus=1 and `tabSales Invoice`.is_opening!='Yes' {conditions} {match_cond}
 			order by
 				`tabSales Invoice`.posting_date desc, `tabSales Invoice`.posting_time desc""".format(
-					conditions=conditions,
-					sales_person_cols=sales_person_cols,
-					sales_team_table=sales_team_table,
-					match_cond=get_match_cond("Sales Invoice"),
-				),
-				self.filters,
-				as_dict=1,
-			)
+				conditions=conditions,
+				sales_person_cols=sales_person_cols,
+				sales_team_table=sales_team_table,
+				match_cond=get_match_cond("Sales Invoice"),
+			),
+			self.filters,
+			as_dict=1,
 		)
 
 	def load_stock_ledger_entries(self):

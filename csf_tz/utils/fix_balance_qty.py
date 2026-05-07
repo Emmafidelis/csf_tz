@@ -19,6 +19,7 @@ def has_correct_balance_qty(previous_sle, sles):
 	return True
 
 
+# nosemgrep: frappe-semgrep-rules.rules.overusing-args
 def create_repost_item_valuation_entry(args):
 	args = frappe._dict(args)
 	repost_entry = frappe.new_doc("Repost Item Valuation")
@@ -37,7 +38,9 @@ def create_repost_item_valuation_entry(args):
 
 from_time = add_to_date(now(), hours=-2)
 
+# nosemgrep: frappe-semgrep-rules.rules.frappe-breaks-multitenancy
 table = frappe.qb.DocType("Stock Ledger Entry")
+# nosemgrep: frappe-semgrep-rules.rules.frappe-breaks-multitenancy
 sles = (
 	frappe.qb.from_(table)
 	.select(

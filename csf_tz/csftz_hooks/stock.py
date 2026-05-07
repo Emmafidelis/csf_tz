@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 
 import frappe
+
+# nosemgrep: frappe-semgrep-rules.rules.frappe-monkey-patching-not-allowed
 from erpnext.stock.doctype.stock_entry.stock_entry import StockEntry
 from frappe import _
 

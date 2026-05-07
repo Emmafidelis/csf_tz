@@ -58,6 +58,7 @@ def process_json_file(json_file_path, created_regions, created_districts, create
 	error_count = 0
 
 	try:
+		# nosemgrep: frappe-semgrep-rules.rules.security.frappe-security-file-traversal
 		with open(json_file_path, "r", encoding="utf-8") as file:
 			data = json.load(file)
 

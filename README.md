@@ -6,7 +6,7 @@ Welcome to the **Country Specific Functionality Tanzania** repository. This proj
 
 ## **Overview**
 
-This repository contains the customizations and configurations necessary to adapt ERPNext to meet the specific needs of Tanzanian businesses. By leveraging the powerful capabilities of ERPNext and the flexibility of the Frappe Framework, this solution provides robust support for Tanzanian tax compliance, localised accounting, inventory management, payroll, and more.
+This repository contains the customizations and configurations necessary to adapt ERPNext (version-16) to meet the specific needs of Tanzanian businesses. By leveraging the powerful capabilities of ERPNext and the flexibility of the Frappe Framework, this solution provides robust support for Tanzanian tax compliance, localised accounting, inventory management, payroll, and more.
 
 ## **Features**
 

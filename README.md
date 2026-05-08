@@ -2,7 +2,7 @@
 
 
 
-Welcome to the **Country Specific Functionality Tanzania** repository. This project enhances ERPNext with country-specific functionality tailored for businesses operating in Tanzania, ensuring compliance with local regulations and optimising business processes.
+Welcome to the **Country Specific Functionality Tanzania** repository. This project enhances ERPNext with country-specific functionality tailored for businesses operating in Tanzania, ensuring compliance with local regulations and optimizing business processes.
 
 ## **Overview**
 
@@ -89,7 +89,7 @@ We welcome contributions to improve and expand this application. If you have sug
 
 ## **Support**
 
-For support and assistance, please create a github issue.
+For support and assistance, please open a GitHub issue on our repository.
 
 ## **Licence**
 

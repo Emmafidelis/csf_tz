@@ -5,26 +5,39 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "unique_records",
+  "tab_sales_purchase",
+  "sales_invoice_section",
   "validate_net_rate",
   "fetch_default_tax_category",
   "limit_uom_as_item_uom",
+  "validate_grand_total_vs_payment_amount_on_sales_invoice",
+  "item_qty_poppup_message",
+  "column_break_sis",
   "show_customer_outstanding_in_sales_order",
+  "auto_pos_for_role",
+  "disable_get_outstanding_functionality",
+  "po_mr_section",
   "allow_reopen_of_po_based_on_role",
   "role_to_reopen_po",
+  "column_break_pomr",
   "allow_reopen_of_material_request_based_on_role",
   "role_to_reopen_material_request",
-  "disable_get_outstanding_functionality",
-  "column_break_3",
-  "auto_pos_for_role",
+  "sales_invoice_qty_settings_section",
+  "override_sales_invoice_qty",
+  "trade_in_settings_section",
+  "enable_trade_in",
+  "tab_stock_accounting",
+  "stock_inventory_section",
   "is_manufacture",
-  "allow_delete_in_sql_command",
   "allow_batch_splitting",
-  "item_qty_poppup_message",
-  "validate_grand_total_vs_payment_amount_on_sales_invoice",
-  "enable_write_off_jv_si",
   "auto_stock_reconciliation",
+  "column_break_stock",
+  "unique_records",
+  "allow_delete_in_sql_command",
+  "write_off_section",
+  "enable_write_off_jv_si",
   "enable_write_off_jv_pi",
+  "column_break_wo",
   "enable_write_off_jv_pe",
   "section_break_8",
   "sle_gle_reposting_start_date",
@@ -36,10 +49,7 @@
   "column_break_wdzp",
   "check_budget_in_mr",
   "check_budget_in_je",
-  "trade_in_settings_section",
-  "enable_trade_in",
-  "sales_invoice_qty_settings_section",
-  "override_sales_invoice_qty",
+  "tab_hr_payroll",
   "payroll_overrides_section",
   "enable_payroll_approval",
   "override_salary_slip_email_message",
@@ -58,6 +68,7 @@
   "default_account_for_additional_component_cash_journal",
   "column_break_bhc2q",
   "ot_module",
+  "tab_system_data",
   "tz_regions_section",
   "populate_tz_regions",
   "column_break_tz_regions",
@@ -88,10 +99,6 @@
    "label": "Validate Net Rate in Sales Invoice"
   },
   {
-   "fieldname": "column_break_3",
-   "fieldtype": "Column Break"
-  },
-  {
    "default": "0",
    "description": "Fetch Tax Category from Default Tax Templates",
    "fieldname": "fetch_default_tax_category",
@@ -117,7 +124,8 @@
   },
   {
    "fieldname": "section_break_8",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "SLE/GLE Reposting"
   },
   {
    "fieldname": "column_break_10",
@@ -225,7 +233,6 @@
    "mandatory_depends_on": "eval: doc.override_salary_slip_email_message == 1"
   },
   {
-   "collapsible": 1,
    "fieldname": "payware_settings_section",
    "fieldtype": "Section Break",
    "label": "Payware Settings"
@@ -322,7 +329,6 @@
    "label": "Disable Automatic Get Outstanding Documents"
   },
   {
-   "collapsible": 1,
    "fieldname": "tz_regions_section",
    "fieldtype": "Section Break",
    "label": "TZ Regions Data"
@@ -438,6 +444,62 @@
    "fieldtype": "Int",
    "label": "Sync Interval (Minutes)",
    "mandatory_depends_on": "eval:doc.enable_sync"
+  },
+  {
+   "fieldname": "sales_invoice_section",
+   "fieldtype": "Section Break",
+   "label": "Sales Invoice & Tax"
+  },
+  {
+   "fieldname": "column_break_sis",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "po_mr_section",
+   "fieldtype": "Section Break",
+   "label": "Purchase Order & Material Request"
+  },
+  {
+   "fieldname": "column_break_pomr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "stock_inventory_section",
+   "fieldtype": "Section Break",
+   "label": "Stock & Inventory"
+  },
+  {
+   "fieldname": "column_break_stock",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "write_off_section",
+   "fieldtype": "Section Break",
+   "label": "Write-Off Journal Entries"
+  },
+  {
+   "fieldname": "column_break_wo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tab_sales_purchase",
+   "fieldtype": "Tab Break",
+   "label": "Sales & Purchase"
+  },
+  {
+   "fieldname": "tab_stock_accounting",
+   "fieldtype": "Tab Break",
+   "label": "Stock & Accounting"
+  },
+  {
+   "fieldname": "tab_hr_payroll",
+   "fieldtype": "Tab Break",
+   "label": "HR & Payroll"
+  },
+  {
+   "fieldname": "tab_system_data",
+   "fieldtype": "Tab Break",
+   "label": "System & Data"
   }
  ],
  "index_web_pages_for_search": 1,

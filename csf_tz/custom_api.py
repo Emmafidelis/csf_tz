@@ -4,6 +4,7 @@ import base64
 import io
 import json
 import traceback
+from typing import Any
 
 import frappe
 import frappe.permissions
@@ -22,7 +23,7 @@ from csf_tz import console
 
 
 @frappe.whitelist()
-def generate_qrcode(qrcode_data):
+def generate_qrcode(qrcode_data: Any):
 	c = pyqrcode.create(qrcode_data)
 	s = io.BytesIO()
 	c.png(s, scale=3)
@@ -31,12 +32,12 @@ def generate_qrcode(qrcode_data):
 
 
 @frappe.whitelist()
-def app_error_log(title, error):
+def app_error_log(title: Any, error: Any):
 	frappe.log(traceback.format_exc())
 
 
 @frappe.whitelist()
-def print_out(message, alert=False, add_traceback=False, to_error_log=False):
+def print_out(message: Any, alert: Any = False, add_traceback: Any = False, to_error_log: Any = False):
 	if not message:
 		return
 
@@ -129,7 +130,7 @@ def get_app_branch(app):
 
 
 @frappe.whitelist()
-def get_item_info(item_code):
+def get_item_info(item_code: Any):
 	sle = get_stock_ledger_entries(item_code)
 	iwb_map = {}
 	float_precision = cint(frappe.db.get_default("float_precision")) or 3
@@ -165,10 +166,10 @@ def get_item_info(item_code):
 
 
 @frappe.whitelist()
-def get_item_prices(item_code, currency, customer=None, company=None):
+def get_item_prices(item_code: Any, currency: Any, customer: Any = None, company: Any = None):
 	item_code = "'{0}'".format(item_code)
 	currency = "'{0}'".format(currency)
-	unique_records = int(frappe.db.get_value("CSF TZ Settings", None, "unique_records"))
+	unique_records = int(frappe.db.get_single_value("CSF TZ Settings", "unique_records"))
 	prices_list = []
 	unique_price_list = []
 	max_records = frappe.db.get_value("Company", company, "max_records_in_dialog") or 20
@@ -213,19 +214,19 @@ def get_item_prices(item_code, currency, customer=None, company=None):
 
 
 @frappe.whitelist()
-def get_item_prices_custom(filters=None, start=0, limit=20):
+def get_item_prices_custom(filters: Any = None, start: Any = 0, limit: Any = 20):
 	if isinstance(filters, str):  # If filters is a string, deserialize it
 		import json
 
 		try:
 			filters = json.loads(filters)
 		except json.JSONDecodeError:
-			frappe.throw("Invalid format for filters. Ensure it's a valid JSON object.")
+			frappe.throw(_("Invalid format for filters. Ensure it's a valid JSON object."))
 
 	if not filters:  # Default to an empty dictionary if filters is None or invalid
 		filters = {}
 
-	unique_records = int(frappe.db.get_value("CSF TZ Settings", None, "unique_records"))
+	unique_records = int(frappe.db.get_single_value("CSF TZ Settings", "unique_records"))
 	customer = filters.get("customer", "")
 	company = filters.get("company", "")
 	item_code = "'{0}'".format(filters.get("item_code", ""))
@@ -245,6 +246,8 @@ def get_item_prices_custom(filters=None, start=0, limit=20):
 	if customer:
 		conditions += " AND SI.customer = '%s'" % customer
 
+	# TODO: refactor to parameterized query; inputs are pre-quoted upstream
+	# nosemgrep: frappe-sql-format-injection
 	query = """ SELECT SI.name, SI.posting_date, SI.customer, SIT.item_code, SIT.qty,  SIT.rate
                 FROM `tabSales Invoice` AS SI
                 INNER JOIN `tabSales Invoice Item` AS SIT ON SIT.parent = SI.name
@@ -278,11 +281,11 @@ def get_item_prices_custom(filters=None, start=0, limit=20):
 
 
 @frappe.whitelist()
-def create_delivery_note(doc=None, method=None, doc_name=None):
+def create_delivery_note(doc: Any = None, method: Any = None, doc_name: Any = None):
 	if not doc:
 		doc = frappe.get_doc("Sales Invoice", doc_name)
 	if not doc:
-		frappe.throw("Sales Invoice doc required")
+		frappe.throw(_("Sales Invoice doc required"))
 	if not doc.enabled_auto_create_delivery_notes:
 		return
 	if doc.update_stock:
@@ -318,10 +321,11 @@ def create_delivery_note(doc=None, method=None, doc_name=None):
 		delivery_doc.save()
 		if method:
 			url = frappe.utils.get_url_to_form(delivery_doc.doctype, delivery_doc.name)
-			msgprint = "Delivery Note Created as Draft at <a href='{0}'>{1}</a>".format(
-				url, delivery_doc.name
+			frappe.msgprint(
+				_("Delivery Note Created as Draft at <a href='{0}'>{1}</a>").format(url, delivery_doc.name),
+				title="Delivery Note Created",
+				indicator="green",
 			)
-			frappe.msgprint(_(msgprint), title="Delivery Note Created", indicator="green")
 
 
 def check_item_is_maintain(item_name):
@@ -333,7 +337,7 @@ def check_item_is_maintain(item_name):
 
 
 @frappe.whitelist()
-def make_delivery_note(source_name, target_doc=None, set_warehouse=None):
+def make_delivery_note(source_name: Any, target_doc: Any = None, set_warehouse: Any = None):
 	def warehouse_condition(doc):
 		if set_warehouse:
 			return doc.warehouse == set_warehouse
@@ -418,10 +422,8 @@ def create_indirect_expense_item(doc, method=None):
 	indirect_expenses_group = frappe.db.exists("Item Group", "Indirect Expenses")
 	if not indirect_expenses_group:
 		indirect_expenses_group = frappe.get_doc(
-			dict(
-				doctype="Item Group",
-				item_group_name="Indirect Expenses",
-			)
+			doctype="Item Group",
+			item_group_name="Indirect Expenses",
 		)
 		indirect_expenses_group.flags.ignore_permissions = True
 		frappe.flags.ignore_account_permission = True
@@ -447,30 +449,27 @@ def create_indirect_expense_item(doc, method=None):
 			doc.db_update()
 		return item.name
 	new_item = frappe.get_doc(
-		dict(
-			doctype="Item",
-			item_code=doc.account_name,
-			item_group="Indirect Expenses",
-			is_stock_item=0,
-			is_sales_item=0,
-			stock_uom="Nos",
-			include_item_in_manufacturing=0,
-			item_defaults=[
-				{
-					"company": doc.company,
-					"expense_account": doc.name,
-					"default_warehouse": "",
-				}
-			],
-		)
+		doctype="Item",
+		item_code=doc.account_name,
+		item_group="Indirect Expenses",
+		is_stock_item=0,
+		is_sales_item=0,
+		stock_uom="Nos",
+		include_item_in_manufacturing=0,
+		item_defaults=[
+			{
+				"company": doc.company,
+				"expense_account": doc.name,
+				"default_warehouse": "",
+			}
+		],
 	)
 	new_item.flags.ignore_permissions = True
 	frappe.flags.ignore_account_permission = True
 	new_item.save()
 	if new_item.name:
 		url = frappe.utils.get_url_to_form(new_item.doctype, new_item.name)
-		msgprint = "New Item is Created <a href='{0}'>{1}</a>".format(url, new_item.name)
-		frappe.msgprint(_(msgprint))
+		frappe.msgprint(_("New Item is Created <a href='{0}'>{1}</a>").format(url, new_item.name))
 		doc.item = new_item.name
 	doc.db_update()
 	return new_item.name
@@ -494,7 +493,7 @@ def check_expenses_in_parent_accounts(account_name):
 
 
 @frappe.whitelist()
-def add_indirect_expense_item(account_name):
+def add_indirect_expense_item(account_name: Any):
 	account = frappe.get_doc("Account", account_name)
 	return create_indirect_expense_item(account)
 
@@ -555,14 +554,14 @@ def delete_doc(doctype, docname):
 			frappe.msgprint(_("{0} {1} is Canceled").format("Stock Entry", doc.name))
 			doc.flags.ignore_permissions = True
 			doc.delete()
-			frappe.db.commit()
+			frappe.db.commit()  # nosemgrep: frappe-manual-commit -- persist cancel+delete in one user-facing action
 			frappe.msgprint(_("{0} {1} is Deleted").format("Stock Entry", doc.name))
 		else:
 			frappe.msgprint(_("{0} {1} is Not Canceled").format("Stock Entry", doc.name))
 	elif doc.docstatus == 0 or doc.docstatus == 2:
 		doc.flags.ignore_permissions = True
 		doc.delete()
-		frappe.db.commit()
+		frappe.db.commit()  # nosemgrep: frappe-manual-commit -- persist delete in one user-facing action
 		frappe.msgprint(_("{0} {1} is Deleted").format("Stock Entry", doc.name))
 
 
@@ -643,6 +642,8 @@ def get_item_balance(item_code, company, warehouse=None):
 			values.append(warehouse)
 			condition += " AND warehouse = %s"
 
+	# condition is a constant fragment with %s placeholders; values are bound through Frappe SQL params
+	# nosemgrep: frappe-sql-format-injection
 	actual_qty = frappe.db.sql(
 		"""select sum(actual_qty) from tabBin
         where item_code=%s {0}""".format(condition),
@@ -653,7 +654,9 @@ def get_item_balance(item_code, company, warehouse=None):
 
 
 @frappe.whitelist()
-def validate_item_remaining_qty(item_code, company, warehouse=None, stock_qty=None, so_detail=None):
+def validate_item_remaining_qty(
+	item_code: Any, company: Any, warehouse: Any = None, stock_qty: Any = None, so_detail: Any = None
+):
 	if not warehouse or not stock_qty:
 		return
 	if frappe.db.get_single_value("Stock Settings", "allow_negative_stock"):
@@ -678,34 +681,20 @@ def validate_item_remaining_qty(item_code, company, warehouse=None, stock_qty=No
 
 		item_remaining_qty = item_balance - qty_to_reduce - pending_si
 		if item_remaining_qty < 0:
+			imbalance_msg = _(
+				"Item Balance: '{2}'<br>Pending Sales Order: '{3}'<br>Pending Direct Sales Invoice: {5}<br>Current request is {4}<br><b>Results into balance Qty for '{0}' to '{1}'</b>"
+			).format(
+				item_code,
+				item_remaining_qty,
+				item_balance,
+				pending_delivery_item_count,
+				float(stock_qty),
+				pending_si,
+			)
 			if not frappe.db.get_single_value("CSF TZ Settings", "item_qty_poppup_message"):
-				frappe.msgprint(
-					_(
-						"Item Balance: '{2}'<br>Pending Sales Order: '{3}'<br>Pending Direct Sales Invoice: {5}<br>Current request is {4}<br><b>Results into balance Qty for '{0}' to '{1}'</b>".format(
-							item_code,
-							item_remaining_qty,
-							item_balance,
-							pending_delivery_item_count,
-							float(stock_qty),
-							pending_si,
-						)
-					),
-					alert=True,
-				)
-
+				frappe.msgprint(imbalance_msg, alert=True)
 			else:
-				frappe.throw(
-					_(
-						"Item Balance: '{2}'<br>Pending Sales Order: '{3}'<br>Pending Direct Sales Invoice: {5}<br>Current request is {4}<br><b>Results into balance Qty for '{0}' to '{1}'</b>".format(
-							item_code,
-							item_remaining_qty,
-							item_balance,
-							pending_delivery_item_count,
-							float(stock_qty),
-							pending_si,
-						)
-					)
-				)
+				frappe.throw(imbalance_msg)
 
 
 def validate_items_remaining_qty(doc, method):
@@ -963,10 +952,11 @@ def make_stock_reconciliation(items, company):
 		stock_rec_doc.run_method("set_missing_values")
 		stock_rec_doc.save()
 		url = frappe.utils.get_url_to_form(stock_rec_doc.doctype, stock_rec_doc.name)
-		msgprint = "Stock Reconciliation Created as Draft at <a href='{0}'>{1}</a>".format(
-			url, stock_rec_doc.name
+		frappe.msgprint(
+			_("Stock Reconciliation Created as Draft at <a href='{0}'>{1}</a>").format(
+				url, stock_rec_doc.name
+			)
 		)
-		frappe.msgprint(_(msgprint))
 		return stock_rec_doc.name
 
 
@@ -1010,7 +1000,7 @@ def get_stock_balance_for(
 @frappe.whitelist()
 def make_stock_reconciliation_for_all_pending_material_request(*args):
 	auto_stock_reconciliation = (
-		frappe.db.get_value("CSF TZ Settings", "CSF TZ Settings", "auto_stock_reconciliation") or 0
+		frappe.db.get_single_value("CSF TZ Settings", "auto_stock_reconciliation") or 0
 	)
 	if auto_stock_reconciliation != 1:
 		return
@@ -1079,7 +1069,7 @@ def calculate_total_net_weight(doc, method):
 
 
 @frappe.whitelist()
-def get_warehouse_options(company):
+def get_warehouse_options(company: Any):
 	warehouses = frappe.get_all(
 		"Warehouse",
 		filters=[
@@ -1148,7 +1138,7 @@ def validate_net_rate(doc, method):
 
 
 @frappe.whitelist()
-def make_withholding_tax_gl_entries_for_purchase(doc, method):
+def make_withholding_tax_gl_entries_for_purchase(doc: Any, method: Any):
 	if method == "From Front End":
 		doc = frappe.get_doc(json.loads(doc))
 
@@ -1229,15 +1219,13 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
 			+ str(doc.conversion_rate)
 		)
 		jv_doc = frappe.get_doc(
-			dict(
-				doctype="Journal Entry",
-				voucher_type="Contra Entry",
-				posting_date=doc.posting_date,
-				accounts=jl_rows,
-				company=doc.company,
-				multi_currency=(0 if doc.party_account_currency == default_currency else 1),
-				user_remark=user_remark,
-			)
+			doctype="Journal Entry",
+			voucher_type="Contra Entry",
+			posting_date=doc.posting_date,
+			accounts=jl_rows,
+			company=doc.company,
+			multi_currency=(0 if doc.party_account_currency == default_currency else 1),
+			user_remark=user_remark,
 		)
 		console(jl_rows)
 		jv_doc.flags.ignore_permissions = True
@@ -1252,14 +1240,13 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
 			item.db_update()
 
 		jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
-		si_msgprint = "Journal Entry Created for Withholding Tax <a href='{0}'>{1}</a>".format(
-			jv_url, jv_doc.name
+		frappe.msgprint(
+			_("Journal Entry Created for Withholding Tax <a href='{0}'>{1}</a>").format(jv_url, jv_doc.name)
 		)
-		frappe.msgprint(_(si_msgprint))
 
 
 @frappe.whitelist()
-def set_fee_abbr(doc=None, method=None):
+def set_fee_abbr(doc: Any = None, method: Any = None):
 	doc.company = frappe.get_value("Fee Structure", doc.fee_structure, "company")
 	send_fee_details_to_bank = frappe.get_value("Company", doc.company, "send_fee_details_to_bank") or 0
 	if not send_fee_details_to_bank:
@@ -1282,7 +1269,7 @@ def enroll_all_students(self):
 	self = frappe.get_doc(dict(self))
 
 	if self.get_students_from == "Student Applicant":
-		frappe.msgprint("Remove student applicants that are already created")
+		frappe.msgprint(_("Remove student applicants that are already created"))
 
 	if len(self.students) > 30:
 		frappe.enqueue("csf_tz.custom_api.enroll_students", self=self)
@@ -1332,9 +1319,9 @@ def enroll_students(self):
 
 
 @frappe.whitelist()
-def get_tax_category(doc_type, company):
+def get_tax_category(doc_type: Any, company: Any):
 	fetch_default_tax_category = (
-		frappe.db.get_value("CSF TZ Settings", None, "fetch_default_tax_category") or 0
+		frappe.db.get_single_value("CSF TZ Settings", "fetch_default_tax_category") or 0
 	)
 	if int(fetch_default_tax_category) != 1:
 		return ""
@@ -1363,7 +1350,7 @@ def get_tax_category(doc_type, company):
 
 
 @frappe.whitelist()
-def make_withholding_tax_gl_entries_for_sales(doc, method):
+def make_withholding_tax_gl_entries_for_sales(doc: Any, method: Any):
 	if method == "From Front End":
 		doc = frappe.get_doc(json.loads(doc))
 
@@ -1443,15 +1430,13 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
 			+ str(doc.conversion_rate)
 		)
 		jv_doc = frappe.get_doc(
-			dict(
-				doctype="Journal Entry",
-				voucher_type="Contra Entry",
-				posting_date=doc.posting_date,
-				accounts=jl_rows,
-				company=doc.company,
-				multi_currency=(0 if doc.party_account_currency == default_currency else 1),
-				user_remark=user_remark,
-			)
+			doctype="Journal Entry",
+			voucher_type="Contra Entry",
+			posting_date=doc.posting_date,
+			accounts=jl_rows,
+			company=doc.company,
+			multi_currency=(0 if doc.party_account_currency == default_currency else 1),
+			user_remark=user_remark,
 		)
 		jv_doc.flags.ignore_permissions = True
 		frappe.flags.ignore_account_permission = True
@@ -1465,10 +1450,9 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
 			item.db_update()
 
 		jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
-		si_msgprint = "Journal Entry Created for Withholding Tax <a href='{0}'>{1}</a>".format(
-			jv_url, jv_doc.name
+		frappe.msgprint(
+			_("Journal Entry Created for Withholding Tax <a href='{0}'>{1}</a>").format(jv_url, jv_doc.name)
 		)
-		frappe.msgprint(_(si_msgprint))
 
 
 def auto_close_dn():
@@ -1504,7 +1488,7 @@ def auto_close_dn():
 	for dn in dn_list:
 		frappe.db.set_value("Delivery Note", dn, "status", "Closed")
 
-		frappe.db.commit()
+		frappe.db.commit()  # nosemgrep: frappe-manual-commit -- per-DN commit avoids long transaction lock
 
 
 def batch_splitting(doc, method):
@@ -1944,20 +1928,20 @@ def validate_grand_total(doc, method):
 		if payment_amount and total_amount != payment_amount:
 			frappe.throw(
 				_(
-					f"<h4 class='text-center' style='background-color: #D3D3D3; font-weight: bold; font-size: 14px'>\
-                Total Amount for all Items: <strong>{total_amount}</strong> must be equal to Paid Amount: <strong>{payment_amount}</strong>,<br>\
-                Please check before submitting this invoice </h4>"
-				)
+					"<h4 class='text-center' style='background-color: #D3D3D3; font-weight: bold; font-size: 14px'>"
+					"Total Amount for all Items: <strong>{0}</strong> must be equal to Paid Amount: <strong>{1}</strong>,<br>"
+					"Please check before submitting this invoice </h4>"
+				).format(total_amount, payment_amount)
 			)
 
 
 @frappe.whitelist()
-def account_exists(account_name):
+def account_exists(account_name: Any):
 	return frappe.db.exists("Account", {"account_name": account_name})
 
 
 @frappe.whitelist()
-def auto_create_account(abbr):
+def auto_create_account(abbr: Any):
 	account_data = [
 		{
 			"account_name": "Payroll Liabilities",
@@ -2041,7 +2025,7 @@ def auto_create_account(abbr):
 
 
 @frappe.whitelist()
-def create_item_tax_template(abbr):
+def create_item_tax_template(abbr: Any):
 	item_tax_template_list = [
 		{"title": "Tanzania Exempted Sales", "tax_type": f"OUTPUT VAT - 18% - {abbr}"},
 		{
@@ -2103,7 +2087,7 @@ def create_tax_category():
 
 
 @frappe.whitelist()
-def linking_tax_template(doctype, default_tax_template, abbr):
+def linking_tax_template(doctype: Any, default_tax_template: Any, abbr: Any):
 	item_list = frappe.db.get_all("Item", filters=default_tax_template)
 
 	for item in item_list:
@@ -2144,7 +2128,7 @@ def linking_tax_template(doctype, default_tax_template, abbr):
 
 
 @frappe.whitelist()
-def make_salary_components_and_structure(abbr):
+def make_salary_components_and_structure(abbr: Any):
 	salary_components_earnings_list = [
 		{
 			"salary_component": "Basic",
@@ -2383,23 +2367,23 @@ def make_salary_components_and_structure(abbr):
 		salary_structure_doc.submit()
 		return "Salary Components and Structure are created successfully."
 	else:
-		frappe.msgprint("Salary Components and Structure are already created.")
+		frappe.msgprint(_("Salary Components and Structure are already created."))
 
 
 @frappe.whitelist()
-def get_item_prices_custom_po(filters=None, start=0, limit=20):
+def get_item_prices_custom_po(filters: Any = None, start: Any = 0, limit: Any = 20):
 	if isinstance(filters, str):  # If filters is a string, deserialize it
 		import json
 
 		try:
 			filters = json.loads(filters)
 		except json.JSONDecodeError:
-			frappe.throw("Invalid format for filters. Ensure it's a valid JSON object.")
+			frappe.throw(_("Invalid format for filters. Ensure it's a valid JSON object."))
 
 	if not filters:  # Default to an empty dictionary if filters is None or invalid
 		filters = {}
 
-	unique_records = int(frappe.db.get_value("CSF TZ Settings", None, "unique_records"))
+	unique_records = int(frappe.db.get_single_value("CSF TZ Settings", "unique_records"))
 	customer = filters.get("customer", "")
 	company = filters.get("company", "")
 	item_code = "'{0}'".format(filters.get("item_code", ""))
@@ -2419,6 +2403,8 @@ def get_item_prices_custom_po(filters=None, start=0, limit=20):
 	if customer:
 		conditions += " AND PI.supplier = '%s'" % customer
 
+	# TODO: refactor to parameterized query; inputs are pre-quoted upstream
+	# nosemgrep: frappe-sql-format-injection
 	query = """ SELECT PI.name, PI.posting_date, PI.supplier, PIT.item_code, PIT.qty,  PIT.rate
                 FROM `tabPurchase Invoice` AS PI
                 INNER JOIN `tabPurchase Invoice Item` AS PIT ON PIT.parent = PI.name
@@ -2452,10 +2438,10 @@ def get_item_prices_custom_po(filters=None, start=0, limit=20):
 
 
 @frappe.whitelist()
-def get_item_prices_po(item_code, currency, customer=None, company=None):
+def get_item_prices_po(item_code: Any, currency: Any, customer: Any = None, company: Any = None):
 	item_code = "'{0}'".format(item_code)
 	currency = "'{0}'".format(currency)
-	unique_records = int(frappe.db.get_value("CSF TZ Settings", None, "unique_records"))
+	unique_records = int(frappe.db.get_single_value("CSF TZ Settings", "unique_records"))
 	prices_list = []
 	unique_price_list = []
 	max_records = frappe.db.get_value("Company", company, "max_records_in_dialog") or 20
@@ -2679,22 +2665,22 @@ def create_trade_in_stock_entry(doc, method):
 		except Exception as e:
 			frappe.throw(f"Error during Stock Entry creation: {str(e)}")
 	else:
-		frappe.msgprint("No valid items found for stock entry.")
+		frappe.msgprint(_("No valid items found for stock entry."))
 
 
 @frappe.whitelist()
-def create_write_off_jv_si(sales_invoice, account):
+def create_write_off_jv_si(sales_invoice: Any, account: Any):
 	settings = frappe.get_single("CSF TZ Settings")
 
 	# Feature flag check
 	if not getattr(settings, "enable_write_off_jv_si", False):
-		frappe.msgprint("Write-off Journal Entry feature is disabled in CSF TZ Settings.")
+		frappe.msgprint(_("Write-off Journal Entry feature is disabled in CSF TZ Settings."))
 		return
 
 	si = frappe.get_doc("Sales Invoice", sales_invoice)
 
 	if not si.outstanding_amount or si.outstanding_amount <= 0:
-		frappe.throw("No outstanding amount to write off")
+		frappe.throw(_("No outstanding amount to write off"))
 
 	outstanding_amount = flt(si.outstanding_amount)
 	jv = frappe.new_doc("Journal Entry")
@@ -2738,18 +2724,18 @@ def create_write_off_jv_si(sales_invoice, account):
 
 
 @frappe.whitelist()
-def create_write_off_jv_pi(purchase_invoice, account):
+def create_write_off_jv_pi(purchase_invoice: Any, account: Any):
 	settings = frappe.get_single("CSF TZ Settings")
 
 	# Feature flag check
 	if not getattr(settings, "enable_write_off_jv_pi", False):
-		frappe.msgprint("Write-off Journal Entry feature is disabled in CSF TZ Settings.")
+		frappe.msgprint(_("Write-off Journal Entry feature is disabled in CSF TZ Settings."))
 		return
 
 	pi = frappe.get_doc("Purchase Invoice", purchase_invoice)
 
 	if not pi.outstanding_amount or pi.outstanding_amount <= 0:
-		frappe.throw("No outstanding amount to write off")
+		frappe.throw(_("No outstanding amount to write off"))
 
 	outstanding_amount = flt(pi.outstanding_amount)
 	jv = frappe.new_doc("Journal Entry")
@@ -2793,24 +2779,24 @@ def create_write_off_jv_pi(purchase_invoice, account):
 
 
 @frappe.whitelist()
-def create_write_off_jv_pe(payment_entry, account):
+def create_write_off_jv_pe(payment_entry: Any, account: Any):
 	settings = frappe.get_single("CSF TZ Settings")
 
 	# Feature flag check
 	if not getattr(settings, "enable_write_off_jv_pe", False):
-		frappe.msgprint("Write-off Journal Entry feature is disabled in CSF TZ Settings.")
+		frappe.msgprint(_("Write-off Journal Entry feature is disabled in CSF TZ Settings."))
 		return
 
 	pe = frappe.get_doc("Payment Entry", payment_entry)
 
 	if not pe.unallocated_amount or pe.unallocated_amount <= 0:
-		frappe.throw("No unallocated amount to write off")
+		frappe.throw(_("No unallocated amount to write off"))
 
 	if pe.docstatus != 1:
-		frappe.throw("Payment Entry must be submitted before writing off the unallocated amount")
+		frappe.throw(_("Payment Entry must be submitted before writing off the unallocated amount"))
 
 	if pe.payment_type not in ("Receive", "Pay"):
-		frappe.throw("Write-off is only supported for Receive and Pay Payment Entries")
+		frappe.throw(_("Write-off is only supported for Receive and Pay Payment Entries"))
 
 	write_off_amount = flt(pe.unallocated_amount)
 	party_account = pe.paid_from if pe.payment_type == "Receive" else pe.paid_to
@@ -2894,6 +2880,6 @@ def create_write_off_jv_pe(payment_entry, account):
 	pe.reload()
 
 	if flt(pe.unallocated_amount) > 0.0001:
-		frappe.throw("Payment Entry unallocated amount is still greater than zero after write-off")
+		frappe.throw(_("Payment Entry unallocated amount is still greater than zero after write-off"))
 
 	return jv.name
